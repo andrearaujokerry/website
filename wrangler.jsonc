@@ -11,4 +11,7 @@
     // Unknown paths get dist/404.html (added in Phase 5) with a 404 status.
     "not_found_handling": "404-page",
   },
+  // Branch builds run `wrangler preview` (Worker Previews), which requires this block.
+  // Empty: previews reuse the settings above.
+  "previews": {},
 }
