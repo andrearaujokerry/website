@@ -1,0 +1,466 @@
+---
+import Button from '../components/Button.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import FactsStrip from '../components/FactsStrip.astro';
+import JobRow from '../components/JobRow.astro';
+import PostRow from '../components/PostRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHead from '../components/SectionHead.astro';
+import TagList from '../components/TagList.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Sample content drawn from the résumé. The real copy comes from the content collections (Phase 3).
+const colours = [
+  { token: '--color-ink', name: 'Ink', use: 'Headings and emphasis' },
+  { token: '--color-muted', name: 'Muted', use: 'Body copy and descriptions' },
+  { token: '--color-faint', name: 'Faint', use: 'Dates, tags and labels' },
+  { token: '--color-accent', name: 'Accent', use: 'Italic accents and the focus ring' },
+  { token: '--color-rule', name: 'Rule', use: 'Hairline dividers', decorative: true },
+  { token: '--color-ok', name: 'Status', use: 'Availability dot', decorative: true },
+];
+
+const facts = [
+  { label: 'Studied', value: 'Computer Science and Finance, Northeastern' },
+  { label: 'Previously', value: 'Annaly Capital Management and MFS' },
+  { label: 'Focus', value: 'Data pipelines, BI and full-stack work' },
+  { label: 'On the side', value: 'LeadMe, plus data science projects' },
+];
+
+const jobs = [
+  {
+    role: 'Business Intelligence Co-op',
+    company: 'Annaly Capital Management',
+    url: 'https://www.annaly.com',
+    dates: 'Jan 2025 — Aug 2025',
+    location: 'New York, NY',
+    summary:
+      'Built a firm-wide Accounts Payable dashboard on a new warehouse schema and Python ETL. Automated 10+ NetSuite workflows, saving about 15 hours a week, and traced 30+ loans affected by the Palisades and Eaton fires.',
+    tech: ['Python', 'SQL', 'SuiteScript 2.0', 'ArcGIS REST APIs'],
+  },
+  {
+    role: 'Digital Business Analyst Co-op',
+    company: 'MFS Investment Management',
+    url: 'https://www.mfs.com',
+    dates: 'Jan 2024 — Aug 2024',
+    location: 'Boston, MA',
+    summary:
+      'Wrote 30+ SQL data checks that keep fund data on MFS.com complete and compliant, built a Java service layer for investment details, and shipped 10+ UI changes.',
+    tech: ['SQL', 'Java', 'JBoss', 'Adobe Experience Manager'],
+  },
+];
+
+const posts = [
+  {
+    title: 'What a wildfire taught me about joining messy datasets',
+    date: new Date('2026-09-01'),
+    readingTime: '8 min',
+  },
+  {
+    title: 'Automating month-end reporting with SuiteScript',
+    date: new Date('2026-06-01'),
+    readingTime: '6 min',
+  },
+];
+---
+
+<BaseLayout
+  title="Styleguide · Andre Araujo-Kerry"
+  description="Design tokens and components for andrearaujokerry.com."
+  noindex
+>
+  <div class="container">
+    <header class="intro">
+      <Eyebrow>Internal</Eyebrow>
+      <h1>Styleguide</h1>
+      <p>
+        Every design token and component on the site, with sample content from the résumé. Use the
+        theme button in the header to check the dark theme; contrast ratios update live.
+      </p>
+    </header>
+
+    <section aria-labelledby="colour">
+      <SectionHead title="Colour" id="colour" note="Text on background" />
+      <ul class="list-plain swatches" role="list">
+        {colours.map((colour) => (
+          <li
+            class="swatch"
+            data-swatch
+            data-token={colour.token}
+            data-decorative={colour.decorative ? '' : undefined}
+          >
+            <span class="chip" style={`background: var(${colour.token})`} />
+            <div>
+              <p class="swatch-name">
+                {colour.name} <code>{colour.token}</code>
+              </p>
+              <p class="swatch-use">{colour.use}</p>
+              <p class="swatch-values">
+                <span data-value>—</span> · <span data-contrast>—</span>
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div class="tints">
+        {[1, 2, 3, 4].map((n) => (
+          <span class="tint" style={`background: var(--tint-${n})`}>
+            <code>--tint-{n}</code>
+          </span>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="type">
+      <SectionHead title="Type" id="type" note="390 → 1440px" />
+      <dl class="specimens">
+        <div>
+          <dt>Display · Instrument Serif · 52–94px</dt>
+          <dd class="t-display">
+            Software and data, <em>carefully</em> built.
+          </dd>
+        </div>
+        <div>
+          <dt>Footer call to action · Serif · 54–88px</dt>
+          <dd class="t-cta">
+            Let's <em>talk.</em>
+          </dd>
+        </div>
+        <div>
+          <dt>Section title · Serif · 40–54px</dt>
+          <dd class="t-h2">Experience</dd>
+        </div>
+        <div>
+          <dt>Project title · Serif · 32–36px</dt>
+          <dd class="t-h3">LeadMe</dd>
+        </div>
+        <div>
+          <dt>Post title · Serif · 25–31px</dt>
+          <dd class="t-post">What a wildfire taught me about joining messy datasets</dd>
+        </div>
+        <div>
+          <dt>Lede · Instrument Sans · 18–20px</dt>
+          <dd class="t-lede">
+            Computer Science and Finance graduate building data pipelines, dashboards and the
+            occasional side project.
+          </dd>
+        </div>
+        <div>
+          <dt>Body · Instrument Sans · 16–17px</dt>
+          <dd>
+            Built a firm-wide Accounts Payable dashboard on a new warehouse schema and Python ETL,
+            consolidating data from several external sources into one view.
+          </dd>
+        </div>
+        <div>
+          <dt>Role title · Sans 600 · 19px</dt>
+          <dd class="t-role">Business Intelligence Co-op</dd>
+        </div>
+        <div>
+          <dt>Labels · system monospace · 12.5–13px</dt>
+          <dd class="t-label">Jan 2025 — Aug 2025 · Python · SQL</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="components">
+      <SectionHead title="Components" id="components" />
+
+      <div class="demo">
+        <p class="demo-label">Eyebrow</p>
+        <Eyebrow status>Open to new roles</Eyebrow>
+        <Eyebrow>Without a status dot</Eyebrow>
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Buttons</p>
+        <div class="row">
+          <Button>Solid</Button>
+          <Button variant="outline">Outline</Button>
+        </div>
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Tag list</p>
+        <TagList items={['Python', 'SQL', 'TypeScript', 'React']} />
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Facts strip</p>
+        <FactsStrip items={facts} />
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Section head and job rows</p>
+        <SectionHead
+          title="Experience"
+          note="2024 — 2025"
+          more={{ label: 'Download résumé (PDF) ↓', href: '/styleguide#components' }}
+        />
+        <ol class="list-plain" role="list">
+          {jobs.map((job) => (
+            <JobRow {...job} />
+          ))}
+        </ol>
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Project cards (no screenshot yet, so a tinted frame)</p>
+        <div class="projects">
+          <ProjectCard
+            title="LeadMe"
+            meta="2024 · Ongoing"
+            description="A Python pipeline that reads LinkedIn posts for job changes and turns them into real-estate leads, with a TypeScript dashboard for outreach. It has contributed to 6 closed sales."
+            tech={['Python', 'SQL', 'TypeScript']}
+            tint={1}
+          />
+          <ProjectCard
+            title="Medications: more harm than good?"
+            meta="2024 · Data science"
+            description="Predicting the outcomes of adverse drug reactions from patient demographics in the FDA's FAERS data, comparing k-NN, random forest and SVM models."
+            tech={['Python', 'scikit-learn']}
+            tint={3}
+          />
+        </div>
+      </div>
+
+      <div class="demo">
+        <p class="demo-label">Post rows (sample titles)</p>
+        <ul class="list-plain" role="list">
+          {posts.map((post) => (
+            <PostRow {...post} href="/styleguide#components" />
+          ))}
+        </ul>
+      </div>
+
+      <p class="demo-note">
+        The site header and footer are shown at the top and bottom of this page.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Show each colour's value and its contrast against the page background, for the active theme.
+  const toRgb = (color: string) => (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+  const channel = (value: number) => {
+    const c = value / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = ([r = 0, g = 0, b = 0]: number[]) =>
+    0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  const contrast = (a: number[], b: number[]) => {
+    const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+    return (high + 0.05) / (low + 0.05);
+  };
+
+  function update() {
+    const rootStyle = getComputedStyle(document.documentElement);
+    const background = toRgb(getComputedStyle(document.body).backgroundColor);
+    document.querySelectorAll<HTMLElement>('[data-swatch]').forEach((swatch) => {
+      const chip = swatch.querySelector<HTMLElement>('.chip');
+      const value = swatch.querySelector('[data-value]');
+      const output = swatch.querySelector('[data-contrast]');
+      if (!chip || !value || !output) return;
+      const ratio = contrast(toRgb(getComputedStyle(chip).backgroundColor), background);
+      const verdict = swatch.hasAttribute('data-decorative')
+        ? 'decorative'
+        : ratio >= 4.5
+          ? 'passes AA'
+          : 'FAILS AA';
+      value.textContent = rootStyle.getPropertyValue(swatch.dataset.token ?? '').trim();
+      output.textContent = `${ratio.toFixed(2)}:1, ${verdict}`;
+    });
+  }
+
+  new MutationObserver(update).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+  update();
+</script>
+
+<style>
+  .intro {
+    padding-block: var(--hero-space) 1rem;
+  }
+
+  .intro h1 {
+    margin-top: 1.75rem;
+    font: 400 var(--text-display) / 0.98 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .intro p {
+    max-width: 38rem;
+    margin-top: 1.5rem;
+    font-size: var(--text-lede);
+    color: var(--color-muted);
+  }
+
+  section {
+    padding-top: var(--section-space);
+  }
+
+  code {
+    font: 400 var(--text-label) / 1 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 2rem 2.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .swatch {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .chip {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px solid var(--color-rule);
+    border-radius: 50%;
+  }
+
+  .swatch-name {
+    font-weight: 600;
+  }
+
+  .swatch-use {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+
+  .swatch-values {
+    margin-top: 0.25rem;
+    font: 400 var(--text-meta) / 1.5 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .tints {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .tint {
+    display: flex;
+    align-items: flex-end;
+    aspect-ratio: 16 / 10;
+    padding: 0.75rem;
+    border-radius: var(--radius-frame);
+  }
+
+  .specimens > div {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    gap: 2rem;
+    align-items: baseline;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .specimens dt {
+    font: 400 var(--text-meta) / 1.5 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .specimens dd {
+    margin: 0;
+  }
+
+  .specimens em {
+    color: var(--color-accent);
+  }
+
+  .t-display {
+    font: 400 var(--text-display) / 0.98 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .t-cta {
+    font: 400 var(--text-cta) / 1 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .t-h2 {
+    font: 400 var(--text-h2) / 1 var(--font-serif);
+  }
+
+  .t-h3 {
+    font: 400 var(--text-h3) / 1.1 var(--font-serif);
+  }
+
+  .t-post {
+    font: 400 var(--text-post) / 1.2 var(--font-serif);
+  }
+
+  .t-lede {
+    max-width: 38rem;
+    font-size: var(--text-lede);
+    color: var(--color-muted);
+  }
+
+  .t-role {
+    font-size: var(--text-role);
+    font-weight: 600;
+  }
+
+  .t-label {
+    font: 400 var(--text-label) / 1.6 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .demo {
+    display: grid;
+    gap: 1rem;
+    padding-block: 2.5rem;
+    border-bottom: 1px dashed var(--color-rule);
+  }
+
+  .demo-label,
+  .demo-note {
+    font: 500 var(--text-label) / 1.4 var(--font-mono);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+
+  .demo-note {
+    padding-top: 2rem;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem 2.5rem;
+  }
+
+  @media (max-width: 47.49em) {
+    .tints {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .specimens > div {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .projects {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

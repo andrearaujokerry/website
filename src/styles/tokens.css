@@ -1,0 +1,83 @@
+/*
+ * Design tokens for the Editorial direction (WORKPLAN.md, Appendix B).
+ * --font-serif and --font-sans come from Astro's Fonts API (astro.config.mjs).
+ * Fluid sizes scale linearly between 390px and 1440px viewports.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Colour: light theme (default) */
+  --color-bg: #f5f2eb;
+  --color-ink: #1c1a17;
+  --color-muted: #5e594f;
+  --color-faint: #736d62;
+  --color-accent: #ae3f19;
+  --color-rule: #e0dacc;
+  --color-ok: #3e8e5e;
+  --tint-1: #d7e2dc;
+  --tint-2: #e6ddcb;
+  --tint-3: #efdcc9;
+  --tint-4: #e0dce7;
+
+  /* Type */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --text-display: clamp(3.25rem, 2.275rem + 4vw, 5.875rem); /* 52 → 94px */
+  --text-cta: clamp(3.375rem, 2.5857rem + 3.2381vw, 5.5rem); /* 54 → 88px */
+  --text-h2: clamp(2.5rem, 2.175rem + 1.3333vw, 3.375rem); /* 40 → 54px */
+  --text-h3: clamp(2rem, 1.9071rem + 0.381vw, 2.25rem); /* 32 → 36px */
+  --text-post: clamp(1.5625rem, 1.4232rem + 0.5714vw, 1.9375rem); /* 25 → 31px */
+  --text-wordmark: clamp(1.375rem, 1.3054rem + 0.2857vw, 1.5625rem); /* 22 → 25px */
+  --text-lede: clamp(1.125rem, 1.0786rem + 0.1905vw, 1.25rem); /* 18 → 20px */
+  --text-body: clamp(1rem, 0.9768rem + 0.0952vw, 1.0625rem); /* 16 → 17px */
+  --text-role: 1.1875rem; /* 19px */
+  --text-small: 0.9375rem; /* 15px */
+  --text-meta: 0.8125rem; /* 13px */
+  --text-label: 0.78125rem; /* 12.5px */
+  --text-eyebrow: clamp(0.6875rem, 0.6527rem + 0.1429vw, 0.78125rem); /* 11 → 12.5px */
+  --tracking-label: 0.08em;
+
+  /* Space and layout */
+  --container-max: 70rem; /* 1120px, including the gutters */
+  --gutter: clamp(1.25rem, 0.7857rem + 1.9048vw, 2.5rem); /* 20 → 40px */
+  --header-height: clamp(4rem, 3.5357rem + 1.9048vw, 5.25rem); /* 64 → 84px */
+  --hero-space: clamp(3.75rem, 2.45rem + 5.3333vw, 7.25rem); /* 60 → 116px */
+  --section-space: clamp(4.75rem, 4.1rem + 2.6667vw, 6.5rem); /* 76 → 104px */
+  --footer-space: clamp(6.25rem, 5.0893rem + 4.7619vw, 9.375rem); /* 100 → 150px */
+  --radius-frame: 4px;
+  --radius-pill: 999px;
+}
+
+/* Dark theme, chosen with the toggle (data-theme is set before first paint). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #181612;
+  --color-ink: #eee9df;
+  --color-muted: #ada697;
+  --color-faint: #8f887b;
+  --color-accent: #e8774a;
+  --color-rule: #2f2b25;
+  --color-ok: #5dbb82;
+  --tint-1: #1f2b27;
+  --tint-2: #2a261e;
+  --tint-3: #30251c;
+  --tint-4: #26232e;
+}
+
+/* Same dark values when JavaScript is off: follow the OS setting. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-bg: #181612;
+    --color-ink: #eee9df;
+    --color-muted: #ada697;
+    --color-faint: #8f887b;
+    --color-accent: #e8774a;
+    --color-rule: #2f2b25;
+    --color-ok: #5dbb82;
+    --tint-1: #1f2b27;
+    --tint-2: #2a261e;
+    --tint-3: #30251c;
+    --tint-4: #26232e;
+  }
+}

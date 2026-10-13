@@ -82,17 +82,17 @@ Owner: You
 
 ## Phase 2 — Design system
 
-- [ ] `src/styles/tokens.css`: colours for both themes, type scale, spacing and layout widths ([Appendix B](#appendix-b--design-tokens)).
-- [ ] Fonts through Astro's Fonts API:
+- [x] `src/styles/tokens.css`: colours for both themes, type scale, spacing and layout widths ([Appendix B](#appendix-b--design-tokens)).
+- [x] Fonts through Astro's Fonts API:
   - Instrument Serif (regular and italic) and Instrument Sans (400–600), Latin subset only.
   - Preload just the serif file the H1 uses.
   - Metric-matched fallback fonts, so text doesn't jump when the web fonts arrive.
-- [ ] `src/styles/global.css`: reset, base typography, underlined link style, a clearly visible `:focus-visible` ring, selection colour, `prefers-reduced-motion` rules.
-- [ ] Themes:
+- [x] `src/styles/global.css`: reset, base typography, underlined link style, a clearly visible `:focus-visible` ring, selection colour, `prefers-reduced-motion` rules.
+- [x] Themes:
   - Follow the OS setting by default; a toggle button overrides it and remembers the choice.
   - A tiny inline script in `<head>` applies the theme before first paint, so the wrong theme never flashes.
-- [ ] Components: `BaseLayout`, `SiteHeader` (desktop nav and a mobile "Menu" disclosure), `SectionHead`, `Eyebrow`, `FactsStrip`, `JobRow`, `ProjectCard`, `PostRow`, `TagList`, `Button` (solid and outline pills), `SiteFooter`.
-- [ ] A `/styleguide` page (no-index, not in the sitemap) that shows every token and component in both themes.
+- [x] Components: `BaseLayout`, `SiteHeader` (sticky, with desktop nav, a mobile "Menu" disclosure and the theme toggle), `SectionHead`, `Eyebrow`, `FactsStrip`, `JobRow`, `ProjectCard`, `PostRow`, `TagList`, `Button` (solid and outline pills), `SiteFooter`.
+- [x] A `/styleguide` page (no-index; keep it out of the sitemap when that lands in Phase 6) that shows every token and component, with live contrast checks.
 
 **Done when** the styleguide looks right in both themes at 390 px and 1440 px, and every text colour pair meets 4.5:1.
 
@@ -102,7 +102,7 @@ Owner: You
   - `jobs`: one YAML file with an entry per role.
   - `projects`: one Markdown/MDX file per project. The frontmatter feeds the card; the body is the case study.
   - `posts`: MDX files with title, date, description, tags and `draft`.
-- [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path.
+- [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path. *(Started in Phase 2 with the name, nav and GitHub link.)*
 - [ ] Seed everything from the résumé, so pages are built on real facts before the final copy exists.
 - [ ] Leave entries marked `draft: true` out of production builds.
 

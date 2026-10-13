@@ -1,0 +1,67 @@
+---
+interface Props {
+  title: string;
+  /** id for the heading, so the section can use aria-labelledby. */
+  id?: string;
+  /** Small mono note after the title, e.g. "2024 — 2026". Hidden on small screens. */
+  note?: string;
+  more?: { label: string; href: string };
+}
+
+const { title, id, note, more } = Astro.props;
+---
+
+<div class="section-head">
+  <h2 id={id}>
+    {title}
+    {note && <small>{note}</small>}
+  </h2>
+  {more && (
+    <a class="more" href={more.href}>
+      {more.label}
+    </a>
+  )}
+</div>
+
+<style>
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  h2 {
+    font: 400 var(--text-h2) / 1 var(--font-serif);
+    letter-spacing: -0.012em;
+  }
+
+  small {
+    margin-left: 0.875rem;
+    font: 500 var(--text-meta) / 1 var(--font-mono);
+    letter-spacing: 0.04em;
+    vertical-align: super;
+    color: var(--color-faint);
+  }
+
+  .more {
+    flex: none;
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+
+  .more:hover {
+    color: var(--color-ink);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 47.49em) {
+    small {
+      display: none;
+    }
+  }
+</style>

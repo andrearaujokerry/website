@@ -10,4 +10,11 @@ export default defineConfig([
   eslintPluginAstro.configs.recommended,
   // Accessibility rules for .astro templates (backed by eslint-plugin-jsx-a11y-x).
   eslintPluginAstro.configs['jsx-a11y-recommended'],
+  {
+    rules: {
+      // Safari/VoiceOver drops list semantics from lists styled with `list-style: none`,
+      // so an explicit role="list" on those lists is intentional, not redundant.
+      'astro/jsx-a11y/no-redundant-roles': ['error', { ul: ['list'], ol: ['list'] }],
+    },
+  },
 ]);

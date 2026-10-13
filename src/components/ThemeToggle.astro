@@ -1,0 +1,73 @@
+<button class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark theme">
+  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+    <circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
+    <path d="M8 1.6a6.4 6.4 0 0 1 0 12.8z" fill="currentColor"></path>
+  </svg>
+</button>
+
+<script>
+  // The inline script in BaseLayout sets data-theme before paint; this keeps it in sync.
+  const KEY = 'theme';
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+
+  const readSaved = () => {
+    try {
+      return localStorage.getItem(KEY);
+    } catch {
+      return null;
+    }
+  };
+
+  const sync = () => {
+    const dark = root.dataset.theme === 'dark';
+    buttons.forEach((button) => button.setAttribute('aria-pressed', String(dark)));
+  };
+
+  buttons.forEach((button) =>
+    button.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem(KEY, next);
+      } catch {
+        // Not saved; the choice still applies until the page is reloaded.
+      }
+      sync();
+    }),
+  );
+
+  // Until someone picks a theme, follow the OS as it changes.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+    if (!readSaved()) {
+      root.dataset.theme = event.matches ? 'dark' : 'light';
+      sync();
+    }
+  });
+
+  sync();
+</script>
+
+<style>
+  .theme-toggle {
+    display: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--color-rule);
+    border-radius: 50%;
+    background: none;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--color-ink);
+  }
+
+  /* The toggle needs JavaScript; without it the site follows the OS theme. */
+  :global(.js) .theme-toggle {
+    display: grid;
+  }
+</style>
