@@ -43,7 +43,7 @@ Week 5  Phase 6 + 7    launch
 | --- | --- | --- | --- |
 | 1 | Framework | Astro (latest), fully static output | Requirements §9. Typed content collections and a built-in Fonts API (Astro 6+). |
 | 2 | Styling | Plain CSS with custom properties: one tokens file plus component-scoped styles | The design is mostly typography, and the demo's values map 1:1 to tokens. Tailwind adds little here. |
-| 3 | Hosting | Cloudflare Pages, connected to the GitHub repo | Free, HTTPS, automatic preview deploy for every PR. Cloudflare steers *full-stack* apps to Workers, but Pages remains the simple path for a purely static site. Alternatives: Netlify, Vercel. |
+| 3 | Hosting | Cloudflare Workers (static assets), connected to the GitHub repo through Workers Builds | Free, HTTPS, a build on every push and a preview URL per branch. Cloudflare's recommended path for new projects. Settings live in `wrangler.jsonc`. *(Chosen during setup on Oct 13 2026 instead of Pages; both suit a static site.)* |
 | 4 | Fonts | Instrument Serif + Instrument Sans, self-hosted. Dates and tags use the system monospace font | The demo also uses IBM Plex Mono, but §6 allows at most two font families. System monospace downloads nothing and looks almost identical at 12–13 px. Alternative: keep Plex Mono and relax §6. |
 | 5 | Text colour | Darken the "faint" grey from `#8A8476` to `#736D62` | The demo's dates and tags have 3.3:1 contrast; AA needs 4.5:1. The new value gives 4.6:1 ([Appendix B](#appendix-b--design-tokens)). |
 | 6 | Writing section | Build the posts collection, but hide the section until there are at least 2 posts | Writing is P2 (open question 4). This avoids an empty section at launch. |
@@ -75,24 +75,24 @@ Owner: You
 - [x] Add `.nvmrc` (Node 22) and scripts: `dev`, `build`, `preview`, `check` (`astro check`), `lint`, `format`.
 - [x] Add Prettier (with `prettier-plugin-astro`) and ESLint (`eslint-plugin-astro`, including its accessibility rules).
 - [x] Add a GitHub Actions workflow, `.github/workflows/ci.yml`: install → check → lint → build, on every PR and every push to `main`.
-- [ ] Connect the repo to Cloudflare Pages: build command `npm run build`, output `dist/`, production branch `main`, previews for PRs. *(You: authorize Cloudflare's GitHub app.)*
+- [x] Connect the repo to Cloudflare: a Worker named `website`, built by Workers Builds and live at https://website.andre-araujo-kerry.workers.dev. Build and asset settings are in `wrangler.jsonc`.
 - [ ] Optional: protect `main` so merging needs green CI.
 
-**Done when** a placeholder page is live on the `*.pages.dev` URL and a test PR shows green CI and its own preview link.
+**Done when** a placeholder page is live on the `*.workers.dev` URL and a test PR shows green CI and its own preview link.
 
 ## Phase 2 — Design system
 
-- [ ] `src/styles/tokens.css`: colours for both themes, type scale, spacing and layout widths ([Appendix B](#appendix-b--design-tokens)).
-- [ ] Fonts through Astro's Fonts API:
+- [x] `src/styles/tokens.css`: colours for both themes, type scale, spacing and layout widths ([Appendix B](#appendix-b--design-tokens)).
+- [x] Fonts through Astro's Fonts API:
   - Instrument Serif (regular and italic) and Instrument Sans (400–600), Latin subset only.
   - Preload just the serif file the H1 uses.
   - Metric-matched fallback fonts, so text doesn't jump when the web fonts arrive.
-- [ ] `src/styles/global.css`: reset, base typography, underlined link style, a clearly visible `:focus-visible` ring, selection colour, `prefers-reduced-motion` rules.
-- [ ] Themes:
+- [x] `src/styles/global.css`: reset, base typography, underlined link style, a clearly visible `:focus-visible` ring, selection colour, `prefers-reduced-motion` rules.
+- [x] Themes:
   - Follow the OS setting by default; a toggle button overrides it and remembers the choice.
   - A tiny inline script in `<head>` applies the theme before first paint, so the wrong theme never flashes.
-- [ ] Components: `BaseLayout`, `SiteHeader` (desktop nav and a mobile "Menu" disclosure), `SectionHead`, `Eyebrow`, `FactsStrip`, `JobRow`, `ProjectCard`, `PostRow`, `TagList`, `Button` (solid and outline pills), `SiteFooter`.
-- [ ] A `/styleguide` page (no-index, not in the sitemap) that shows every token and component in both themes.
+- [x] Components: `BaseLayout`, `SiteHeader` (sticky, with desktop nav, a mobile "Menu" disclosure and the theme toggle), `SectionHead`, `Eyebrow`, `FactsStrip`, `JobRow`, `ProjectCard`, `PostRow`, `TagList`, `Button` (solid and outline pills), `SiteFooter`.
+- [x] A `/styleguide` page (no-index; keep it out of the sitemap when that lands in Phase 6) that shows every token and component, with live contrast checks.
 
 **Done when** the styleguide looks right in both themes at 390 px and 1440 px, and every text colour pair meets 4.5:1.
 
@@ -102,7 +102,7 @@ Owner: You
   - `jobs`: one YAML file with an entry per role.
   - `projects`: one Markdown/MDX file per project. The frontmatter feeds the card; the body is the case study.
   - `posts`: MDX files with title, date, description, tags and `draft`.
-- [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path.
+- [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path. *(Started in Phase 2 with the name, nav and GitHub link.)*
 - [ ] Seed everything from the résumé, so pages are built on real facts before the final copy exists.
 - [ ] Leave entries marked `draft: true` out of production builds.
 
@@ -161,7 +161,7 @@ None of these pages are in the demo. They're designed directly in the browser fr
 - [ ] Replace the résumé-based placeholder copy with the final content from Phase 0.
 - [ ] Remove the under-construction `noindex` tag from the home page.
 - [ ] Domain:
-  - Add it to Cloudflare and attach it to the Pages project.
+  - Attach it to the `website` Worker as a custom domain (it's already registered with Cloudflare).
   - Confirm HTTPS.
   - Redirect `www` → the bare domain.
 - [ ] Turn on Cloudflare Web Analytics.
@@ -218,6 +218,7 @@ website/
 │   ├── content.config.ts
 │   └── site.config.ts
 ├── astro.config.mjs
+├── wrangler.jsonc               Cloudflare Worker settings
 ├── package.json
 ├── README.md
 ├── REQUIREMENTS.md
