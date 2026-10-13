@@ -1,0 +1,117 @@
+---
+// Temporary placeholder until the real home page lands (WORKPLAN.md, Phase 4).
+const name = 'Andre Araujo-Kerry';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Keep search engines out while the site is under construction. Remove at launch (Phase 7). -->
+    <meta name="robots" content="noindex" />
+    <meta name="description" content={`${name}: personal site, coming soon.`} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{name}</title>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">New site coming soon</p>
+      <h1>
+        Andre <span class="nowrap">Araujo-Kerry</span>
+      </h1>
+      <p class="lede">
+        Computer Science and Business Administration (Finance), Northeastern University.
+      </p>
+      <p class="links">
+        <a href="https://github.com/andrearaujokerry">GitHub</a>
+      </p>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f2eb;
+    --ink: #1c1a17;
+    --muted: #5e594f;
+    --faint: #736d62;
+    --accent: #ae3f19;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181612;
+      --ink: #eee9df;
+      --muted: #ada697;
+      --faint: #8f887b;
+      --accent: #e8774a;
+    }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font:
+      400 1.0625rem/1.6 system-ui,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: clamp(4rem, 14vw, 10rem) clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font:
+      500 0.78rem/1 ui-monospace,
+      'SF Mono',
+      Menlo,
+      Consolas,
+      monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  h1 {
+    margin: 1.75rem 0 0;
+    font:
+      400 clamp(3.25rem, 2.275rem + 4vw, 5.875rem) / 0.98 ui-serif,
+      Georgia,
+      serif;
+    letter-spacing: -0.02em;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .lede {
+    max-width: 38rem;
+    margin: 1.75rem 0 0;
+    font-size: 1.25rem;
+    color: var(--muted);
+  }
+
+  .links {
+    margin: 2rem 0 0;
+    font-weight: 500;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.25em;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+</style>
