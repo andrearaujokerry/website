@@ -56,10 +56,10 @@ Week 5  Phase 6 + 7    launch
 ## Phase 0 — Decisions and content
 Owner: You
 
-- [ ] Confirm or change the decisions above.
+- [x] Confirm or change the decisions above. *(All approved, Oct 13 2026.)*
 - [ ] Create a Cloudflare account (needed in Phase 1).
-- [ ] Choose a domain name (needed in Phase 7).
-- [ ] Write content, using the templates in [Appendix A](#appendix-a--content-templates):
+- [x] Choose a domain name (needed in Phase 7): **andrearaujokerry.com**. It was still unregistered on Oct 13 2026, so register it soon.
+- [ ] Write content, using the templates in [Appendix A](#appendix-a--content-templates). *Until it's written, the site is built from your résumé (October 2026) as placeholder content.*
   - [ ] A one-line headline, a 2–3 sentence intro, and the four hero facts: *Currently*, *Previously*, *Focus*, *On the side*.
   - [ ] Every role: title, company and URL, dates, remote or location, 1–3 impact statements with numbers, tech used.
   - [ ] 3–4 featured projects: name, one-liner, 2–3 sentence description, year, status, tech, links and a screenshot (16:10, at least 1600 × 1000 px).
@@ -71,10 +71,10 @@ Owner: You
 
 ## Phase 1 — Skeleton and pipeline
 
-- [ ] Scaffold Astro (minimal template, strict TypeScript) in the repo root, keeping `README.md`, `REQUIREMENTS.md`, `WORKPLAN.md` and `demos/`.
-- [ ] Add `.nvmrc` (Node 22) and scripts: `dev`, `build`, `preview`, `check` (`astro check`), `lint`, `format`.
-- [ ] Add Prettier (with `prettier-plugin-astro`) and ESLint (`eslint-plugin-astro`).
-- [ ] Add a GitHub Actions workflow, `.github/workflows/ci.yml`: install → check → lint → build, on every PR and every push to `main`.
+- [x] Scaffold Astro (minimal template, strict TypeScript) in the repo root, keeping `README.md`, `REQUIREMENTS.md`, `WORKPLAN.md` and `demos/`.
+- [x] Add `.nvmrc` (Node 22) and scripts: `dev`, `build`, `preview`, `check` (`astro check`), `lint`, `format`.
+- [x] Add Prettier (with `prettier-plugin-astro`) and ESLint (`eslint-plugin-astro`, including its accessibility rules).
+- [x] Add a GitHub Actions workflow, `.github/workflows/ci.yml`: install → check → lint → build, on every PR and every push to `main`.
 - [ ] Connect the repo to Cloudflare Pages: build command `npm run build`, output `dist/`, production branch `main`, previews for PRs. *(You: authorize Cloudflare's GitHub app.)*
 - [ ] Optional: protect `main` so merging needs green CI.
 
@@ -103,7 +103,7 @@ Owner: You
   - `projects`: one Markdown/MDX file per project. The frontmatter feeds the card; the body is the case study.
   - `posts`: MDX files with title, date, description, tags and `draft`.
 - [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path.
-- [ ] Seed everything with the demo's placeholder content, so pages can be built before real content exists.
+- [ ] Seed everything from the résumé, so pages are built on real facts before the final copy exists.
 - [ ] Leave entries marked `draft: true` out of production builds.
 
 **Done when** deleting a required field from any entry fails the build with a readable error.
@@ -158,8 +158,8 @@ None of these pages are in the demo. They're designed directly in the browser fr
 
 ## Phase 7 — Launch
 
-- [ ] Replace the placeholder content with the real content from Phase 0.
-- [ ] Search the repo for the demo names (Lumen Labs, Fieldnote, Brightwave, Tidewatch, gitpulse, Pantry, Margin) to make sure none are left.
+- [ ] Replace the résumé-based placeholder copy with the final content from Phase 0.
+- [ ] Remove the under-construction `noindex` tag from the home page.
 - [ ] Domain:
   - Add it to Cloudflare and attach it to the Pages project.
   - Confirm HTTPS.

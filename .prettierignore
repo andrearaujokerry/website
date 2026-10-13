@@ -1,0 +1,8 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+demos/
+# Planning docs are hand-formatted; keep Prettier from re-padding their tables.
+/REQUIREMENTS.md
+/WORKPLAN.md
