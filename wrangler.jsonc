@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker's name in the Cloudflare dashboard.
+  "name": "website",
+  "compatibility_date": "2026-10-01",
+  // Build the site before every deploy and preview upload.
+  "build": { "command": "npm run build" },
+  // A static, assets-only Worker: serve Astro's build output as-is.
+  "assets": {
+    "directory": "./dist",
+    // Unknown paths get dist/404.html (added in Phase 5) with a 404 status.
+    "not_found_handling": "404-page",
+  },
+}
