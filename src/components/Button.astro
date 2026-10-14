@@ -4,17 +4,19 @@ interface Props {
   href?: string;
   variant?: 'solid' | 'outline';
   type?: 'button' | 'submit';
+  /** Extra data attributes are passed through to the element. */
+  [key: `data-${string}`]: string | undefined;
 }
 
-const { href, variant = 'solid', type = 'button' } = Astro.props;
+const { href, variant = 'solid', type = 'button', ...attributes } = Astro.props;
 ---
 
 {href ? (
-  <a class:list={['button', variant]} href={href}>
+  <a class:list={['button', variant]} href={href} {...attributes}>
     <slot />
   </a>
 ) : (
-  <button class:list={['button', variant]} type={type}>
+  <button class:list={['button', variant]} type={type} {...attributes}>
     <slot />
   </button>
 )}

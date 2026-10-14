@@ -1,0 +1,10 @@
+# Certifications. Add a `url` to link a credential and a `date` (YYYY-MM) if you have one.
+# Schema: src/content.config.ts
+
+- id: claude-api
+  name: Building with the Claude API
+  issuer: Anthropic
+
+- id: claude-vertex-ai
+  name: Claude with Google Cloud's Vertex AI
+  issuer: Anthropic

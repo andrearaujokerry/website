@@ -8,8 +8,21 @@ import ProjectCard from '../components/ProjectCard.astro';
 import SectionHead from '../components/SectionHead.astro';
 import TagList from '../components/TagList.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getFeaturedProjects, getJobs, projectMeta } from '../lib/content';
+import { formatRange } from '../lib/dates';
+import { site } from '../site.config';
 
-// Sample content drawn from the résumé. The real copy comes from the content collections (Phase 3).
+// Facts, jobs and projects come from the real content (src/site.config.ts, src/content/).
+// There are no posts yet, so the post rows use sample titles.
+const jobs = await getJobs();
+const projects = await getFeaturedProjects();
+const years = jobs.flatMap(({ data }) => [
+  data.start.getUTCFullYear(),
+  data.end === 'present' ? new Date().getUTCFullYear() : data.end.getUTCFullYear(),
+]);
+const experienceSpan = `${Math.min(...years)} — ${Math.max(...years)}`;
+const tints = [1, 2, 3, 4] as const;
+
 const colours = [
   { token: '--color-ink', name: 'Ink', use: 'Headings and emphasis' },
   { token: '--color-muted', name: 'Muted', use: 'Body copy and descriptions' },
@@ -17,36 +30,6 @@ const colours = [
   { token: '--color-accent', name: 'Accent', use: 'Italic accents and the focus ring' },
   { token: '--color-rule', name: 'Rule', use: 'Hairline dividers', decorative: true },
   { token: '--color-ok', name: 'Status', use: 'Availability dot', decorative: true },
-];
-
-const facts = [
-  { label: 'Studied', value: 'Computer Science and Finance, Northeastern' },
-  { label: 'Previously', value: 'Annaly Capital Management and MFS' },
-  { label: 'Focus', value: 'Data pipelines, BI and full-stack work' },
-  { label: 'On the side', value: 'LeadMe, plus data science projects' },
-];
-
-const jobs = [
-  {
-    role: 'Business Intelligence Co-op',
-    company: 'Annaly Capital Management',
-    url: 'https://www.annaly.com',
-    dates: 'Jan 2025 — Aug 2025',
-    location: 'New York, NY',
-    summary:
-      'Built a firm-wide Accounts Payable dashboard on a new warehouse schema and Python ETL. Automated 10+ NetSuite workflows, saving about 15 hours a week, and traced 30+ loans affected by the Palisades and Eaton fires.',
-    tech: ['Python', 'SQL', 'SuiteScript 2.0', 'ArcGIS REST APIs'],
-  },
-  {
-    role: 'Digital Business Analyst Co-op',
-    company: 'MFS Investment Management',
-    url: 'https://www.mfs.com',
-    dates: 'Jan 2024 — Aug 2024',
-    location: 'Boston, MA',
-    summary:
-      'Wrote 30+ SQL data checks that keep fund data on MFS.com complete and compliant, built a Java service layer for investment details, and shipped 10+ UI changes.',
-    tech: ['SQL', 'Java', 'JBoss', 'Adobe Experience Manager'],
-  },
 ];
 
 const posts = [
@@ -186,19 +169,27 @@ const posts = [
 
       <div class="demo">
         <p class="demo-label">Facts strip</p>
-        <FactsStrip items={facts} />
+        <FactsStrip items={site.facts} />
       </div>
 
       <div class="demo">
         <p class="demo-label">Section head and job rows</p>
         <SectionHead
           title="Experience"
-          note="2024 — 2025"
+          note={experienceSpan}
           more={{ label: 'Download résumé (PDF) ↓', href: '/styleguide#components' }}
         />
         <ol class="list-plain" role="list">
-          {jobs.map((job) => (
-            <JobRow {...job} />
+          {jobs.map(({ data }) => (
+            <JobRow
+              role={data.role}
+              company={data.company}
+              url={data.url}
+              dates={formatRange(data.start, data.end)}
+              location={data.location}
+              summary={data.summary}
+              tech={data.tech}
+            />
           ))}
         </ol>
       </div>
@@ -206,20 +197,17 @@ const posts = [
       <div class="demo">
         <p class="demo-label">Project cards (no screenshot yet, so a tinted frame)</p>
         <div class="projects">
-          <ProjectCard
-            title="LeadMe"
-            meta="2024 · Ongoing"
-            description="A Python pipeline that reads LinkedIn posts for job changes and turns them into real-estate leads, with a TypeScript dashboard for outreach. It has contributed to 6 closed sales."
-            tech={['Python', 'SQL', 'TypeScript']}
-            tint={1}
-          />
-          <ProjectCard
-            title="Medications: more harm than good?"
-            meta="2024 · Data science"
-            description="Predicting the outcomes of adverse drug reactions from patient demographics in the FDA's FAERS data, comparing k-NN, random forest and SVM models."
-            tech={['Python', 'scikit-learn']}
-            tint={3}
-          />
+          {projects.map(({ data }, index) => (
+            <ProjectCard
+              title={data.title}
+              meta={projectMeta(data)}
+              description={data.description}
+              tech={data.tech}
+              image={data.cover}
+              imageAlt={data.coverAlt}
+              tint={tints[index % tints.length]}
+            />
+          ))}
         </div>
       </div>
 
