@@ -1,0 +1,47 @@
+# Work history, newest first. The home page reads from this file.
+# Placeholder copy taken from the October 2026 résumé; rewrite it in your own voice.
+# Dates are YYYY-MM; use `present` for a current role. Schema: src/content.config.ts
+
+- id: annaly
+  role: Business Intelligence Co-op
+  company: Annaly Capital Management
+  url: https://www.annaly.com
+  location: New York, NY
+  start: 2025-01
+  end: 2025-08
+  summary: >-
+    Built a firm-wide Accounts Payable dashboard on a new warehouse schema and
+    Python ETL, automated 10+ accounting workflows in NetSuite, and traced 30+
+    loans affected by the Palisades and Eaton fires.
+  highlights:
+    - Built a firm-wide Accounts Payable dashboard to improve internal reporting
+      and team efficiency, designing a scalable relational schema for data
+      warehousing and writing Python ETL to consolidate several external sources.
+    - Automated 10+ accounting and internal analysis workflows with NetSuite's
+      SuiteScript 2.0, saving about 15 hours of reporting and analysis a week.
+    - Assessed wildfire exposure by mapping property-level data to portfolio
+      collateral, querying ArcGIS REST APIs with Python to identify 30+ loans
+      affected by the Palisades and Eaton fires.
+  tech: [Python, SQL, SuiteScript 2.0, ArcGIS REST APIs]
+
+- id: mfs
+  role: Digital Business Analyst Co-op
+  company: MFS Investment Management
+  url: https://www.mfs.com
+  location: Boston, MA
+  start: 2024-01
+  end: 2024-08
+  summary: >-
+    Wrote 30+ SQL data checks that keep fund data on MFS.com complete and
+    compliant, built a Java service layer for investment details, and shipped
+    10+ UI changes to the site.
+  highlights:
+    - Created 30+ SQL data checks to ensure the completeness and accuracy of
+      investment data for every fund on MFS.com, meeting legal requirements.
+    - Developed a Java service layer to handle exceptions and data mapping for
+      investment details, testing JSON responses with Postman on Red Hat JBoss.
+    - Implemented 10+ UI changes on MFS.com with HTML, CSS and Adobe Experience
+      Manager.
+    - Worked in Agile ceremonies with Jira and Bitbucket across several
+      codebases and environments.
+  tech: [SQL, Java, JBoss, Adobe Experience Manager]

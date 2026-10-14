@@ -98,13 +98,15 @@ Owner: You
 
 ## Phase 3 — Content model
 
-- [ ] `src/content.config.ts` with Zod schemas for three collections:
+- [x] `src/content.config.ts` with Zod schemas for five collections:
   - `jobs`: one YAML file with an entry per role.
-  - `projects`: one Markdown/MDX file per project. The frontmatter feeds the card; the body is the case study.
-  - `posts`: MDX files with title, date, description, tags and `draft`.
-- [ ] `src/site.config.ts`: name, headline, availability flag, email, social links, résumé path. *(Started in Phase 2 with the name, nav and GitHub link.)*
-- [ ] Seed everything from the résumé, so pages are built on real facts before the final copy exists.
-- [ ] Leave entries marked `draft: true` out of production builds.
+  - `projects`: one Markdown file per project. The frontmatter feeds the card; the body is the case study.
+  - `posts`: Markdown files with title, date, description, tags and `draft`.
+  - `education` and `certifications`: one YAML file each. Added because, for a recent graduate, education belongs on the home page.
+  - Plain Markdown for now; add the MDX integration when a case study or post needs components.
+- [x] `src/site.config.ts`: name, role, location, headline, intro, facts, availability, email (stored in two parts so it never appears whole in the HTML), social links, résumé path.
+- [x] Seed everything from the résumé, so pages are built on real facts before the final copy exists.
+- [x] Leave entries marked `draft: true` out of production builds.
 
 **Done when** deleting a required field from any entry fails the build with a readable error.
 
@@ -134,7 +136,7 @@ None of these pages are in the demo. They're designed directly in the browser fr
   - Previous/next project links.
   - Write-ups can land after launch; cards only link to case studies that exist.
 - [ ] `/about` (P1): longer bio, how I work, skills grouped by category (no skill bars), optional photo.
-- [ ] Résumé: `public/resume.pdf`, plus a `/resume` redirect so the public link never changes.
+- [ ] Résumé: `public/resume.pdf`, plus a `/resume` redirect so the public link never changes. Use a web copy **without your phone number or street address**: the PDF is public.
 - [ ] A `404` page in the same style, linking home and to projects.
 
 **Done when** every page is reachable from the nav or footer, and each one passes the same checks as the home page.
@@ -201,9 +203,12 @@ website/
 │   ├── components/              SiteHeader, JobRow, ProjectCard, …
 │   ├── content/
 │   │   ├── jobs.yaml
+│   │   ├── education.yaml
+│   │   ├── certifications.yaml
 │   │   ├── projects/*.md
-│   │   └── posts/*.mdx
+│   │   └── posts/*.md
 │   ├── layouts/BaseLayout.astro
+│   ├── lib/                     content and date helpers
 │   ├── pages/
 │   │   ├── index.astro
 │   │   ├── about.astro
@@ -239,44 +244,66 @@ website/
 
 ## Appendix A — content templates
 
+The real files in `src/content/` are the best examples. The rules for every field are in `src/content.config.ts`, and `npm run build` names the file and field when something is wrong.
+
 **A role** (`src/content/jobs.yaml`, newest first):
 
 ```yaml
-- id: lumen-labs
-  role: Senior Software Engineer
-  company: Lumen Labs
-  url: https://example.com
-  start: 2023-03
-  end: present            # or a month, e.g. 2023-01
-  location: Remote        # Remote | Hybrid | On-site | a city
+- id: company-name            # unique, lowercase
+  role: Software Engineer
+  company: Company Name
+  url: https://example.com    # optional
+  location: Boston, MA        # a city, or Remote / Hybrid
+  start: 2026-06              # YYYY-MM
+  end: present                # YYYY-MM, or present
   summary: >-
-    Lead engineer for checkout and payments. Cut p95 checkout latency by 40%
-    and launched multi-currency pricing in 12 markets.
-  tech: [TypeScript, Go, PostgreSQL, AWS]
+    One or two sentences with a number, for the Experience list.
+  highlights:                 # optional: full impact statements
+    - Built …, cutting … by 40%.
+  tech: [Python, SQL]
+  draft: false                # optional: true hides it on the live site
 ```
 
-**A project** (`src/content/projects/tidewatch.md`):
+**A project** (`src/content/projects/project-name.md`):
 
 ```markdown
 ---
-title: Tidewatch
-tagline: Surf and tide forecasts on one glanceable screen.
-description: Built for my own dawn patrols; now checked by 3,000 surfers a month.
-year: 2025
-status: live              # live | in-progress | archived
-featured: true
-order: 1
-tech: [SvelteKit, Cloudflare Workers]
-links:
+title: Project name
+tagline: One line for cards and link previews.
+description: >-
+  Two or three sentences for the project card.
+start: 2026-01                # YYYY-MM
+end: present                  # YYYY-MM, or present
+status: live                  # live | in-progress | complete | archived
+featured: true                # show it on the home page
+order: 1                      # position among featured projects
+tech: [Python, TypeScript]
+highlights:                   # optional
+  - …
+links:                        # optional
   live: https://example.com
-  source: https://github.com/you/tidewatch
-cover: ../../assets/projects/tidewatch.png
-coverAlt: Tidewatch forecast screen showing wave height and a tide curve
+  source: https://github.com/you/project
+cover: ../../assets/projects/project-name.png   # optional, 16:10
+coverAlt: What the screenshot shows              # required with cover
 draft: false
 ---
 
 ## Problem
 …
+```
+
+**A post** (`src/content/posts/post-name.md`):
+
+```markdown
+---
+title: Post title
+description: One or two sentences for listings and link previews.
+date: 2026-11-02
+tags: [data, python]
+draft: true                   # publish by setting false
+---
+
+Write the post in Markdown here.
 ```
 
 ## Appendix B — design tokens

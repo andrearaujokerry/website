@@ -1,4 +1,6 @@
 ---
+import { formatMonth } from '../lib/dates';
+
 interface Props {
   title: string;
   href: string;
@@ -8,11 +10,7 @@ interface Props {
 }
 
 const { title, href, date, readingTime } = Astro.props;
-const label = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-}).format(date);
+const label = formatMonth(date);
 ---
 
 <li class="post">

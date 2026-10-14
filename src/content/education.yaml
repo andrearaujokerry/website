@@ -1,0 +1,18 @@
+# Degrees, newest first. Placeholder copy from the October 2026 résumé.
+# Dates are YYYY-MM. Schema: src/content.config.ts
+
+- id: northeastern
+  school: Northeastern University
+  department: Khoury College of Computer Sciences
+  degree: B.S. Computer Science and Business Administration (Finance)
+  location: Boston, MA
+  start: 2021-09
+  end: 2026-05
+  gpa: '3.7'
+  coursework:
+    - Computer Systems
+    - Object-Oriented Design
+    - Algorithms and Data
+    - Database Design
+    - Foundations of Data Science
+    - Fundamentals of Software Engineering

@@ -2,7 +2,8 @@
 import { site } from '../site.config';
 import Button from './Button.astro';
 
-const { email, github, linkedin } = site.links;
+const { email } = site;
+const { github, linkedin } = site.links;
 const year = new Date().getFullYear();
 ---
 
@@ -13,7 +14,7 @@ const year = new Date().getFullYear();
     </h2>
     <div class="actions">
       {email && (
-        <Button href={`mailto:${email}`}>
+        <Button href="/#contact" data-email-user={email.user} data-email-domain={email.domain}>
           Email me <span aria-hidden="true">↗</span>
         </Button>
       )}
@@ -36,6 +37,15 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  // Assemble the mailto link in the browser, so the full address never appears in the HTML
+  // that scrapers read. Without JavaScript the button simply stays on this section.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-email-user]').forEach((link) => {
+    const { emailUser, emailDomain } = link.dataset;
+    if (emailUser && emailDomain) link.href = `mailto:${emailUser}@${emailDomain}`;
+  });
+</script>
 
 <style>
   .site-footer {
