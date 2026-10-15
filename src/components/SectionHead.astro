@@ -48,6 +48,9 @@ const { title, id, note, more } = Astro.props;
 
   .more {
     flex: none;
+    /* 44px tap target without changing the layout. */
+    padding-block: 0.625rem;
+    margin-block: -0.625rem;
     font-size: var(--text-small);
     font-weight: 500;
     color: var(--color-muted);

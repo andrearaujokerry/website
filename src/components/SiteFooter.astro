@@ -38,15 +38,6 @@ const year = new Date().getFullYear();
   </div>
 </footer>
 
-<script>
-  // Assemble the mailto link in the browser, so the full address never appears in the HTML
-  // that scrapers read. Without JavaScript the button simply stays on this section.
-  document.querySelectorAll<HTMLAnchorElement>('a[data-email-user]').forEach((link) => {
-    const { emailUser, emailDomain } = link.dataset;
-    if (emailUser && emailDomain) link.href = `mailto:${emailUser}@${emailDomain}`;
-  });
-</script>
-
 <style>
   .site-footer {
     padding-block: var(--footer-space) 3rem;

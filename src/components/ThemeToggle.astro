@@ -66,6 +66,14 @@
     border-color: var(--color-ink);
   }
 
+  /* Touch screens: a 44px tap target. */
+  @media (pointer: coarse) {
+    .theme-toggle {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
+
   /* The toggle needs JavaScript; without it the site follows the OS theme. */
   :global(.js) .theme-toggle {
     display: grid;

@@ -1,0 +1,94 @@
+---
+import { splitEmphasis } from '../lib/text';
+import { site } from '../site.config';
+import Eyebrow from './Eyebrow.astro';
+
+const { email, links, availability } = site;
+const eyebrow = [site.role, availability ?? site.location].join(' · ');
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <Eyebrow status={Boolean(availability)}>{eyebrow}</Eyebrow>
+  <h1 id="hero-title">
+    {splitEmphasis(site.headline).map((part) => (part.em ? <em>{part.text}</em> : part.text))}
+  </h1>
+  <div class="row">
+    <p class="intro">{site.intro}</p>
+    <ul class="links list-plain" role="list">
+      {email && (
+        <li>
+          <a href="/#contact" data-email-user={email.user} data-email-domain={email.domain}>
+            Email
+          </a>
+        </li>
+      )}
+      {links.github && (
+        <li>
+          <a href={links.github}>GitHub</a>
+        </li>
+      )}
+      {links.linkedin && (
+        <li>
+          <a href={links.linkedin}>LinkedIn</a>
+        </li>
+      )}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: var(--hero-space);
+  }
+
+  h1 {
+    max-width: 63rem;
+    margin-top: clamp(1.5rem, 1.2679rem + 0.9524vw, 2.125rem); /* 24 → 34px */
+    font: 400 var(--text-display) / 0.98 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  h1 em {
+    color: var(--color-accent);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 3.75rem;
+    margin-top: clamp(1.75rem, 1.3321rem + 1.7143vw, 2.875rem); /* 28 → 46px */
+  }
+
+  .intro {
+    max-width: 38rem;
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    padding-bottom: 0.375rem;
+    font-weight: 500;
+  }
+
+  /* Inline padding enlarges the tap target to 44px without moving the text. */
+  .links a {
+    padding-block: 0.75rem;
+    text-underline-offset: 0.3em;
+  }
+
+  .links a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 47.49em) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+</style>

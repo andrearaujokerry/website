@@ -1,117 +1,191 @@
 ---
-// Temporary placeholder until the real home page lands (WORKPLAN.md, Phase 4).
-const name = 'Andre Araujo-Kerry';
+import FactsStrip from '../components/FactsStrip.astro';
+import Hero from '../components/Hero.astro';
+import JobRow from '../components/JobRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHead from '../components/SectionHead.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getCertifications,
+  getEducation,
+  getFeaturedProjects,
+  getJobs,
+  projectMeta,
+} from '../lib/content';
+import { formatMonth, formatRange } from '../lib/dates';
+import { stripEmphasis } from '../lib/text';
+import { site } from '../site.config';
+
+const [jobs, education, certifications, projects] = await Promise.all([
+  getJobs(),
+  getEducation(),
+  getCertifications(),
+  getFeaturedProjects(),
+]);
+
+const years = jobs.flatMap(({ data }) => [
+  data.start.getUTCFullYear(),
+  data.end === 'present' ? new Date().getUTCFullYear() : data.end.getUTCFullYear(),
+]);
+const experienceSpan = years.length ? `${Math.min(...years)} — ${Math.max(...years)}` : undefined;
+const tints = [1, 2, 3, 4] as const;
+
+// Cards link to a live site or the source when there is one; case-study links come in Phase 5.
+const projectLink = ({ live, source }: { live?: string; source?: string }) =>
+  live
+    ? { label: 'Visit', href: live, external: true }
+    : source
+      ? { label: 'Source', href: source, external: true }
+      : undefined;
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <!-- Keep search engines out while the site is under construction. Remove at launch (Phase 7). -->
-    <meta name="robots" content="noindex" />
-    <meta name="description" content={`${name}: personal site, coming soon.`} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{name}</title>
-  </head>
-  <body>
-    <main>
-      <p class="eyebrow">New site coming soon</p>
-      <h1>
-        Andre <span class="nowrap">Araujo-Kerry</span>
-      </h1>
-      <p class="lede">
-        Computer Science and Business Administration (Finance), Northeastern University.
-      </p>
-      <p class="links">
-        <a href="https://github.com/andrearaujokerry">GitHub</a>
-      </p>
-    </main>
-  </body>
-</html>
+<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
+<BaseLayout description={stripEmphasis(site.intro)} noindex>
+  <div class="container">
+    <Hero />
+    <div class="facts">
+      <FactsStrip items={site.facts} />
+    </div>
 
-<style is:global>
-  :root {
-    color-scheme: light dark;
-    --bg: #f5f2eb;
-    --ink: #1c1a17;
-    --muted: #5e594f;
-    --faint: #736d62;
-    --accent: #ae3f19;
+    <section class="block" id="work" aria-labelledby="work-title">
+      <SectionHead
+        id="work-title"
+        title="Experience"
+        note={experienceSpan}
+        more={site.resume ? { label: 'Download résumé (PDF)', href: site.resume } : undefined}
+      />
+      <ol class="list-plain" role="list">
+        {jobs.map(({ data }) => (
+          <JobRow
+            role={data.role}
+            company={data.company}
+            url={data.url}
+            dates={formatRange(data.start, data.end)}
+            location={data.location}
+            summary={data.summary}
+            tech={data.tech}
+          />
+        ))}
+      </ol>
+    </section>
+
+    <section class="block" id="education" aria-labelledby="education-title">
+      <SectionHead id="education-title" title="Education" />
+      <ol class="list-plain" role="list">
+        {education.map(({ data }) => (
+          <JobRow
+            role={data.degree}
+            company={data.school}
+            dates={formatRange(data.start, data.end)}
+            location={data.location}
+            summary={[data.department, data.gpa && `GPA ${data.gpa}`].filter(Boolean).join(' · ')}
+            tech={data.coursework}
+          />
+        ))}
+      </ol>
+      {certifications.length > 0 && (
+        <div class="certs">
+          <h3>Certifications</h3>
+          <ul class="list-plain" role="list">
+            {certifications.map(({ data }) => (
+              <li>
+                {data.url ? (
+                  <a href={data.url}>{data.name}</a>
+                ) : (
+                  <span class="name">{data.name}</span>
+                )}
+                <span class="issuer">
+                  {data.issuer}
+                  {data.date && ` · ${formatMonth(data.date)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+
+    <section class="block" id="projects" aria-labelledby="projects-title">
+      <SectionHead id="projects-title" title="Projects" note="Selected" />
+      <div class="projects">
+        {projects.map(({ data }, index) => (
+          <ProjectCard
+            title={data.title}
+            meta={projectMeta(data)}
+            description={data.description}
+            tech={data.tech}
+            link={projectLink(data.links)}
+            image={data.cover}
+            imageAlt={data.coverAlt}
+            tint={tints[index % tints.length]}
+          />
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .facts {
+    margin-top: clamp(3.25rem, 2.5071rem + 3.0476vw, 5.25rem); /* 52 → 84px */
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181612;
-      --ink: #eee9df;
-      --muted: #ada697;
-      --faint: #8f887b;
-      --accent: #e8774a;
+  .block {
+    padding-top: var(--section-space);
+  }
+
+  .certs {
+    display: grid;
+    grid-template-columns: 11.875rem 1fr;
+    gap: 2.25rem;
+    padding-block: 2rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .certs h3 {
+    font: 400 var(--text-meta) / 1.9 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .certs ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .certs li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.125rem 0.75rem;
+  }
+
+  .certs .name,
+  .certs a {
+    font-weight: 600;
+  }
+
+  .issuer {
+    color: var(--color-muted);
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem 2.5rem;
+    margin-top: 2.75rem;
+  }
+
+  @media (max-width: 47.49em) {
+    .certs {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding-block: 1.625rem;
     }
-  }
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font:
-      400 1.0625rem/1.6 system-ui,
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  main {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: clamp(4rem, 14vw, 10rem) clamp(1.25rem, 4vw, 2.5rem);
-  }
-
-  .eyebrow {
-    margin: 0;
-    font:
-      500 0.78rem/1 ui-monospace,
-      'SF Mono',
-      Menlo,
-      Consolas,
-      monospace;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--faint);
-  }
-
-  h1 {
-    margin: 1.75rem 0 0;
-    font:
-      400 clamp(3.25rem, 2.275rem + 4vw, 5.875rem) / 0.98 ui-serif,
-      Georgia,
-      serif;
-    letter-spacing: -0.02em;
-  }
-
-  .nowrap {
-    white-space: nowrap;
-  }
-
-  .lede {
-    max-width: 38rem;
-    margin: 1.75rem 0 0;
-    font-size: 1.25rem;
-    color: var(--muted);
-  }
-
-  .links {
-    margin: 2rem 0 0;
-    font-weight: 500;
-  }
-
-  a {
-    color: var(--ink);
-    text-decoration-color: var(--accent);
-    text-underline-offset: 0.25em;
-  }
-
-  a:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
+    .projects {
+      grid-template-columns: 1fr;
+      gap: 3.25rem;
+      margin-top: 2rem;
+    }
   }
 </style>

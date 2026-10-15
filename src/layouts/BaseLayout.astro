@@ -56,5 +56,8 @@ const { title = site.name, description, noindex = false } = Astro.props;
       <slot />
     </main>
     <SiteFooter />
+    <script>
+      import '../scripts/email-links';
+    </script>
   </body>
 </html>
