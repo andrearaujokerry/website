@@ -62,6 +62,8 @@ const { role, company, url, dates, location, summary, tech = [] } = Astro.props;
   }
 
   .company a {
+    /* Inline padding: a 44px tap target that doesn't move the text. */
+    padding-block: 0.75rem;
     text-decoration-color: var(--color-rule);
   }
 

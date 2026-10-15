@@ -113,16 +113,18 @@ Owner: You
 ## Phase 4 — Home page
 Reference: [demos/1-editorial.png](demos/1-editorial.png) and [demos/1-editorial-mobile.png](demos/1-editorial-mobile.png).
 
-- [ ] Header: wordmark, nav (Work, Projects, Writing, Contact), theme toggle and "Résumé" pill. On mobile, a "Menu" button opens an accessible disclosure.
-- [ ] Hero: availability eyebrow (from config), serif H1 with italic accent words, intro, Email / GitHub / LinkedIn links.
-- [ ] Facts strip: 4 columns on desktop, 2 × 2 on mobile.
-- [ ] Experience: one row per job (dates · role and company · impact and tech), plus a résumé link.
-- [ ] Selected projects:
-  - Featured projects in `order`, in a 2-column grid.
-  - Screenshots go through Astro's `<Image>`: AVIF/WebP, `srcset`, explicit dimensions, lazy-loaded below the fold.
-- [ ] Writing: only rendered when there are published posts.
-- [ ] Contact footer: "Let's talk" call to action, lightly obfuscated email, social links, colophon.
-- [ ] Skip-to-content link, and section anchors with `scroll-margin-top`.
+- [x] Header: wordmark, nav (Work, Projects, Contact), theme toggle and "Résumé" pill (appears once `resume` is set). On mobile, a "Menu" button opens an accessible disclosure.
+- [x] Hero: role and location eyebrow (the availability badge replaces the location once set), serif H1 with italic accent words, intro, Email / GitHub / LinkedIn links.
+- [x] Facts strip: 4 columns on desktop, 2 × 2 on mobile.
+- [x] Experience: one row per job (dates · role and company · impact and tech); the résumé link appears once `resume` is set.
+- [x] Education and certifications, in the same row layout. *(Added: for a recent graduate, education belongs on the home page.)*
+- [x] Selected projects:
+  - Featured projects in `order`, in a 2-column grid, linking to a live site or source when there is one.
+  - Screenshots go through Astro's `<Image>`: AVIF/WebP, `srcset`, explicit dimensions, lazy-loaded below the fold. Until there are screenshots, cards show a tinted frame.
+- [ ] Writing: deferred. The section, post pages and RSS ship together with the Writing backlog item (P2), once there are at least two posts.
+- [x] Contact footer: "Let's talk" call to action, lightly obfuscated email, social links, colophon.
+- [x] Skip-to-content link; anchor jumps and keyboard focus stay clear of the sticky header (`scroll-padding-top`).
+- [x] 44 px tap targets on touch screens for the header controls and standalone links.
 
 **Done when** the page matches the demo side by side at 1440 px and 390 px, has no horizontal scroll from 320 px up, and works with the keyboard alone.
 

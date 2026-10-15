@@ -9,7 +9,8 @@ interface Props {
   meta?: string;
   description: string;
   tech?: string[];
-  link?: { label: string; href: string };
+  /** `external` adds a decorative ↗ that screen readers skip. */
+  link?: { label: string; href: string; external?: boolean };
   /** 16:10 screenshot. Without one, a tinted frame shows the project name. */
   image?: ImageMetadata;
   imageAlt?: string;
@@ -42,7 +43,12 @@ const { title, meta, description, tech = [], link, image, imageAlt = '', tint = 
   <p class="description">{description}</p>
   <div class="foot">
     {tech.length > 0 && <TagList items={tech} />}
-    {link && <a href={link.href}>{link.label}</a>}
+    {link && (
+      <a href={link.href}>
+        {link.label}
+        {link.external && <span aria-hidden="true"> ↗</span>}
+      </a>
+    )}
   </div>
 </article>
 
@@ -125,6 +131,9 @@ const { title, meta, description, tech = [], link, image, imageAlt = '', tint = 
 
   .foot a {
     flex: none;
+    /* 44px tap target without changing the layout. */
+    padding-block: 0.625rem;
+    margin-block: -0.625rem;
     font-size: var(--text-small);
     font-weight: 500;
   }
