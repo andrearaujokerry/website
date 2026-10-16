@@ -1,0 +1,32 @@
+---
+import Button from '../components/Button.astro';
+import PageIntro from '../components/PageIntro.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site.config';
+---
+
+<BaseLayout title={`Page not found · ${site.name}`} description="This page doesn't exist." noindex>
+  <div class="container">
+    <PageIntro
+      eyebrow="404"
+      title="Page *not found*."
+      lede="The link may be old or mistyped. Try the home page, or have a look at my projects."
+    >
+      <div class="actions">
+        <Button href="/">Go to the home page</Button>
+        <Button href="/projects/" variant="outline">
+          See projects
+        </Button>
+      </div>
+    </PageIntro>
+  </div>
+</BaseLayout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 2.5rem;
+  }
+</style>

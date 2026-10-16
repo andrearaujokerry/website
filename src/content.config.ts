@@ -104,4 +104,14 @@ const certifications = defineCollection({
   }),
 });
 
-export const collections = { jobs, projects, posts, education, certifications };
+const skills = defineCollection({
+  loader: file('src/content/skills.yaml'),
+  schema: z.object({
+    label: z.string(),
+    /** Position on the About page and résumé. */
+    order: z.number().int(),
+    items: z.array(z.string()).min(1),
+  }),
+});
+
+export const collections = { jobs, projects, posts, education, certifications, skills };

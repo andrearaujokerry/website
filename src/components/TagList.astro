@@ -1,12 +1,14 @@
 ---
 interface Props {
   items: string[];
+  /** `label`: small mono (tech stacks). `text`: body size, for skills. */
+  variant?: 'label' | 'text';
 }
 
-const { items } = Astro.props;
+const { items, variant = 'label' } = Astro.props;
 ---
 
-<ul class="tags" role="list">
+<ul class:list={['tags', variant]} role="list">
   {items.map((item) => (
     <li>{item}</li>
   ))}
@@ -21,6 +23,21 @@ const { items } = Astro.props;
     list-style: none;
     font: 400 var(--text-label) / 1.6 var(--font-mono);
     color: var(--color-faint);
+  }
+
+  .text {
+    gap: 0.25rem 0.35em;
+    font: inherit;
+    color: var(--color-ink);
+  }
+
+  /* Body-size lists read as a sentence: commas after each item wrap more naturally than dots. */
+  .text li + li::before {
+    content: none;
+  }
+
+  .text li:not(:last-child)::after {
+    content: ',';
   }
 
   /* Visual separator only; the alt text after the slash keeps screen readers quiet. */

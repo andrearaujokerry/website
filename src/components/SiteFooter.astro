@@ -33,6 +33,21 @@ const year = new Date().getFullYear();
       <span>
         © {year} {site.name}
       </span>
+      <nav aria-label="Footer">
+        <ul class="list-plain" role="list">
+          <li>
+            <a href="/about/">About</a>
+          </li>
+          <li>
+            <a href="/projects/">Projects</a>
+          </li>
+          {site.resume && (
+            <li>
+              <a href="/resume/">Résumé</a>
+            </li>
+          )}
+        </ul>
+      </nav>
       <span>Set in Instrument Serif &amp; Instrument Sans · Built with Astro</span>
     </div>
   </div>
@@ -58,6 +73,23 @@ const year = new Date().getFullYear();
     flex-wrap: wrap;
     gap: 0.875rem;
     margin-top: 2.75rem;
+  }
+
+  .colophon ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+
+  .colophon a {
+    /* Inline padding: a 44px tap target that doesn't move the text. */
+    padding-block: 0.75rem;
+    text-decoration: none;
+  }
+
+  .colophon a:hover {
+    color: var(--color-ink);
+    text-decoration: underline;
   }
 
   .colophon {

@@ -1,0 +1,49 @@
+---
+import { splitEmphasis } from '../lib/text';
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow?: string;
+  /** Wrap words in *asterisks* for the italic accent. */
+  title: string;
+  lede?: string;
+}
+
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<header class="page-intro">
+  {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+  <h1>{splitEmphasis(title).map((part) => (part.em ? <em>{part.text}</em> : part.text))}</h1>
+  {lede && <p class="lede">{lede}</p>}
+  <slot />
+</header>
+
+<style>
+  .page-intro {
+    padding-top: var(--hero-space);
+  }
+
+  h1 {
+    max-width: 50rem;
+    margin-top: clamp(1.25rem, 1.0179rem + 0.9524vw, 1.875rem); /* 20 → 30px */
+    font: 400 var(--text-title) / 1 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  h1:first-child {
+    margin-top: 0;
+  }
+
+  h1 em {
+    color: var(--color-accent);
+  }
+
+  .lede {
+    max-width: 38rem;
+    margin-top: 1.5rem;
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+</style>

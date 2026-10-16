@@ -27,7 +27,7 @@ export interface SiteConfig {
     github?: string;
     linkedin?: string;
   };
-  /** Public path of the résumé PDF, once it's added to /public (Phase 5). */
+  /** Public path of the résumé PDF. Leave unset to hide every résumé link. */
   resume?: string;
 }
 
@@ -47,10 +47,13 @@ export const site: SiteConfig = {
   email: { user: 'andre.araujo.kerry', domain: 'gmail.com' },
   nav: [
     { label: 'Work', href: '/#work' },
-    { label: 'Projects', href: '/#projects' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Projects', href: '/projects/' },
+    { label: 'About', href: '/about/' },
+    { label: 'Contact', href: '#contact' },
   ],
   links: {
     github: 'https://github.com/andrearaujokerry',
   },
+  // Printed from /resume/ by `npm run resume:pdf`; contains no phone number or address.
+  resume: '/resume.pdf',
 };

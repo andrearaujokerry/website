@@ -131,15 +131,15 @@ Reference: [demos/1-editorial.png](demos/1-editorial.png) and [demos/1-editorial
 ## Phase 5 — Inner pages
 None of these pages are in the demo. They're designed directly in the browser from the Phase 2 components.
 
-- [ ] `/projects`: every non-draft project, featured first, then newest first.
-- [ ] `/projects/[slug]`, the case-study template (P1):
-  - Title, a meta row (year, role, stack, links) and a large screenshot.
-  - Sections: Problem → My role → Approach → Outcome → What I'd do differently.
+- [x] `/projects/`: every non-draft project, featured first, then newest first. Linked from the nav and the home page.
+- [x] `/projects/<id>/`: a page for every project:
+  - Title, tagline, live/source links, a When / Status / Stack strip and the screenshot (once there is one).
+  - "What I did": the project's highlights.
+  - The case study, once the Markdown body has one (Problem → My role → Approach → Outcome → What I'd do differently). Cards then say "Case study" instead of "Details".
   - Previous/next project links.
-  - Write-ups can land after launch; cards only link to case studies that exist.
-- [ ] `/about` (P1): longer bio, how I work, skills grouped by category (no skill bars), optional photo.
-- [ ] Résumé: `public/resume.pdf`, plus a `/resume` redirect so the public link never changes. Use a web copy **without your phone number or street address**: the PDF is public.
-- [ ] A `404` page in the same style, linking home and to projects.
+- [x] `/about/` (P1): bio (`src/content/about.md`) and skills grouped by category (`src/content/skills.yaml`), no skill bars. *Still yours to add: how you like to work, what you're looking for next, and (optionally) a photo.*
+- [x] Résumé: `/resume/` is generated from the content collections, and `npm run resume:pdf` prints it to `public/resume.pdf` (one Letter page, no phone number or street address). The header and Experience link to the PDF; the footer and About link to the web version. *(Pulled forward from P2: the generated résumé and its print stylesheet.)*
+- [x] A `404` page in the same style, linking home and to projects. Cloudflare serves it for unknown paths (`not_found_handling` in `wrangler.jsonc`).
 
 **Done when** every page is reachable from the nav or footer, and each one passes the same checks as the home page.
 
@@ -163,7 +163,8 @@ None of these pages are in the demo. They're designed directly in the browser fr
 ## Phase 7 — Launch
 
 - [ ] Replace the résumé-based placeholder copy with the final content from Phase 0.
-- [ ] Remove the under-construction `noindex` tag from the home page.
+- [ ] Remove the under-construction `noindex` from every page (search for `noindex`).
+- [ ] Regenerate the résumé PDF (`npm run resume:pdf`) so it matches the final content.
 - [ ] Domain:
   - Attach it to the `website` Worker as a custom domain (it's already registered with Cloudflare).
   - Confirm HTTPS.
@@ -183,7 +184,6 @@ None of these pages are in the demo. They're designed directly in the browser fr
 - **P2:**
   - Writing section, with an RSS feed.
   - `/now` and `/uses` pages.
-  - Résumé PDF generated from the `jobs` data with a print stylesheet.
   - Project filters, and GitHub stars pulled in at build time.
   - ⌘K command palette and View Transitions.
   - Testimonials.
@@ -207,6 +207,8 @@ website/
 │   │   ├── jobs.yaml
 │   │   ├── education.yaml
 │   │   ├── certifications.yaml
+│   │   ├── skills.yaml
+│   │   ├── about.md
 │   │   ├── projects/*.md
 │   │   └── posts/*.md
 │   ├── layouts/BaseLayout.astro
@@ -214,6 +216,7 @@ website/
 │   ├── pages/
 │   │   ├── index.astro
 │   │   ├── about.astro
+│   │   ├── resume.astro             web résumé; printed to public/resume.pdf
 │   │   ├── 404.astro
 │   │   ├── styleguide.astro
 │   │   ├── projects/index.astro

@@ -5,7 +5,8 @@ interface Props {
   id?: string;
   /** Small mono note after the title, e.g. "2024 — 2026". Hidden on small screens. */
   note?: string;
-  more?: { label: string; href: string };
+  /** Link on the right. `arrow` is decorative and skipped by screen readers. */
+  more?: { label: string; href: string; arrow?: string };
 }
 
 const { title, id, note, more } = Astro.props;
@@ -19,6 +20,7 @@ const { title, id, note, more } = Astro.props;
   {more && (
     <a class="more" href={more.href}>
       {more.label}
+      {more.arrow && <span aria-hidden="true"> {more.arrow}</span>}
     </a>
   )}
 </div>
@@ -26,9 +28,11 @@ const { title, id, note, more } = Astro.props;
 <style>
   .section-head {
     display: flex;
+    /* On narrow screens a long link wraps below the title instead of overflowing. */
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem 1rem;
     padding-bottom: 1.25rem;
     border-bottom: 1px solid var(--color-ink);
   }
