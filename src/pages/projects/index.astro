@@ -1,0 +1,55 @@
+---
+import PageIntro from '../../components/PageIntro.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjects, projectLink, projectMeta } from '../../lib/content';
+import { site } from '../../site.config';
+
+const projects = await getProjects();
+const tints = [1, 2, 3, 4] as const;
+---
+
+<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
+<BaseLayout
+  title={`Projects · ${site.name}`}
+  description={`Projects by ${site.name}: tools and studies built outside of work.`}
+  noindex
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Projects"
+      title="Things I've *built*."
+      lede="Tools and studies I've built outside my co-ops. Each page covers what I did and the stack behind it."
+    />
+    <div class="projects">
+      {projects.map((project, index) => (
+        <ProjectCard
+          title={project.data.title}
+          meta={projectMeta(project.data)}
+          description={project.data.description}
+          tech={project.data.tech}
+          link={projectLink(project)}
+          image={project.data.cover}
+          imageAlt={project.data.coverAlt}
+          tint={tints[index % tints.length]}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem 2.5rem;
+    margin-top: clamp(3.25rem, 2.5071rem + 3.0476vw, 5.25rem); /* 52 → 84px */
+  }
+
+  @media (max-width: 47.49em) {
+    .projects {
+      grid-template-columns: 1fr;
+      gap: 3.25rem;
+    }
+  }
+</style>

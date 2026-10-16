@@ -17,6 +17,7 @@ npm run check         # type-check
 npm run lint          # ESLint, including accessibility rules
 npm run format        # format with Prettier
 npm run build         # production build into dist/
+npm run resume:pdf    # rebuild public/resume.pdf from /resume/ (needs Google Chrome)
 ```
 
 CI runs `check`, `lint`, `format:check` and `build` on every pull request.
@@ -30,5 +31,9 @@ CI runs `check`, `lint`, `format:check` and `build` on every pull request.
 | Education and certifications               | `src/content/education.yaml`, `src/content/certifications.yaml` |
 | Projects (card and case study)             | `src/content/projects/*.md`                                     |
 | Posts                                      | `src/content/posts/*.md`                                        |
+| About page copy                            | `src/content/about.md`                                          |
+| Skills (About page and résumé)             | `src/content/skills.yaml`                                       |
 
 The rules for every field are in `src/content.config.ts`, and `npm run build` names the file and field if something is wrong. Set `draft: true` on an entry to hide it from the live site while you work on it; drafts still show in `npm run dev`. Templates are in [WORKPLAN.md, Appendix A](WORKPLAN.md#appendix-a--content-templates).
+
+The résumé at `/resume/` is generated from the same content. After changing jobs, projects, education or skills, run `npm run resume:pdf` and commit the updated `public/resume.pdf` (set `CHROME_PATH` if Chrome isn't in the default macOS location).

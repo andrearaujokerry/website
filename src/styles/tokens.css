@@ -24,6 +24,7 @@
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --text-display: clamp(3.25rem, 2.275rem + 4vw, 5.875rem); /* 52 → 94px */
   --text-cta: clamp(3.375rem, 2.5857rem + 3.2381vw, 5.5rem); /* 54 → 88px */
+  --text-title: clamp(2.75rem, 2.1rem + 2.6667vw, 4.5rem); /* 44 → 72px, inner-page titles */
   --text-h2: clamp(2.5rem, 2.175rem + 1.3333vw, 3.375rem); /* 40 → 54px */
   --text-h3: clamp(2rem, 1.9071rem + 0.381vw, 2.25rem); /* 32 → 36px */
   --text-post: clamp(1.5625rem, 1.4232rem + 0.5714vw, 1.9375rem); /* 25 → 31px */

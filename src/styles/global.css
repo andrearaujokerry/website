@@ -122,6 +122,38 @@ html {
   transform: none;
 }
 
+/* Print: black on white whatever the theme, and no site chrome. */
+@media print {
+  :root,
+  :root[data-theme],
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --color-bg: #fff;
+    --color-ink: #111;
+    --color-muted: #333;
+    --color-faint: #555;
+    --color-accent: #8a2f0f;
+    --color-rule: #ccc;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* The @page margins frame printed pages; no extra gutters. */
+  .container {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

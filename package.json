@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "astro": "astro"
+    "astro": "astro",
+    "resume:pdf": "astro build && node scripts/resume-pdf.mjs"
   },
   "dependencies": {
     "astro": "^7.3.8"
@@ -25,8 +26,10 @@
     "eslint": "^10.12.0",
     "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-jsx-a11y-x": "^0.2.0",
+    "globals": "^17.13.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
+    "puppeteer-core": "^25.14.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.2",
     "wrangler": "^4.150.0"

@@ -41,6 +41,10 @@ export async function getCertifications() {
   return getCollection('certifications');
 }
 
+export async function getSkills() {
+  return (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+}
+
 const statusLabels: Record<Project['data']['status'], string> = {
   live: 'Live',
   'in-progress': 'In progress',
@@ -48,12 +52,24 @@ const statusLabels: Record<Project['data']['status'], string> = {
   archived: 'Archived',
 };
 
+export function statusLabel(status: Project['data']['status']) {
+  return statusLabels[status];
+}
+
 /** Card label such as "2024 · Live". */
 export function projectMeta({ start, status }: Project['data']) {
-  return `${start.getUTCFullYear()} · ${statusLabels[status]}`;
+  return `${start.getUTCFullYear()} · ${statusLabel(status)}`;
 }
 
 /** True once a project's Markdown body has a written case study (HTML comments don't count). */
 export function hasCaseStudy(project: Project) {
   return (project.body ?? '').replace(/<!--[\s\S]*?-->/g, '').trim().length > 0;
+}
+
+/** Every project has a page; the label says whether it holds a full case study yet. */
+export function projectLink(project: Project) {
+  return {
+    label: hasCaseStudy(project) ? 'Case study' : 'Details',
+    href: `/projects/${project.id}/`,
+  };
 }

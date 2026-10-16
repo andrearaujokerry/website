@@ -1,0 +1,387 @@
+---
+// The résumé, generated from the same content as the rest of the site.
+// public/resume.pdf is printed from this page with `npm run resume:pdf`.
+// It never includes a phone number or street address: the site and the PDF are public.
+import Button from '../components/Button.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCertifications, getEducation, getJobs, getProjects, getSkills } from '../lib/content';
+import { formatRange } from '../lib/dates';
+import { site } from '../site.config';
+
+const [jobs, projects, education, certifications, skills] = await Promise.all([
+  getJobs(),
+  getProjects(),
+  getEducation(),
+  getCertifications(),
+  getSkills(),
+]);
+
+const { email, links } = site;
+const siteUrl = Astro.site?.href ?? '/';
+const siteHost = Astro.site?.host ?? '';
+const display = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+---
+
+<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
+<BaseLayout
+  title={`Résumé · ${site.name}`}
+  description={`Résumé of ${site.name}, ${site.role.toLowerCase()} in ${site.location}.`}
+  noindex
+>
+  <div class="container">
+    <article class="resume">
+      <header class="head">
+        <div>
+          <h1>{site.name}</h1>
+          <p class="role">
+            {site.role} · {site.location}
+          </p>
+        </div>
+        <ul class="contact list-plain" role="list">
+          {email && (
+            <li>
+              <a
+                href="#contact"
+                data-email-user={email.user}
+                data-email-domain={email.domain}
+                data-email-text
+              >
+                Email
+              </a>
+            </li>
+          )}
+          {siteHost && (
+            <li>
+              <a href={siteUrl}>{siteHost}</a>
+            </li>
+          )}
+          {links.github && (
+            <li>
+              <a href={links.github}>{display(links.github)}</a>
+            </li>
+          )}
+          {links.linkedin && (
+            <li>
+              <a href={links.linkedin}>{display(links.linkedin)}</a>
+            </li>
+          )}
+        </ul>
+        {site.resume && (
+          <div class="download">
+            <Button href={site.resume}>
+              Download PDF <span aria-hidden="true">↓</span>
+            </Button>
+          </div>
+        )}
+      </header>
+
+      <section aria-labelledby="experience-title">
+        <h2 id="experience-title">Experience</h2>
+        {jobs.map(({ data }) => (
+          <div class="item">
+            <div class="item-head">
+              <h3>
+                {data.role}, <span class="org">{data.company}</span>
+              </h3>
+              <p class="when">{formatRange(data.start, data.end)}</p>
+            </div>
+            <p class="where">{data.location}</p>
+            <ul>
+              {(data.highlights.length > 0 ? data.highlights : [data.summary]).map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <section aria-labelledby="projects-title">
+        <h2 id="projects-title">Projects</h2>
+        {projects.map(({ data }) => (
+          <div class="item">
+            <div class="item-head">
+              <h3>{data.title}</h3>
+              <p class="when">{formatRange(data.start, data.end)}</p>
+            </div>
+            {data.tech.length > 0 && <p class="where">{data.tech.join(', ')}</p>}
+            <ul>
+              {(data.highlights.length > 0 ? data.highlights : [data.description]).map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <section aria-labelledby="education-title">
+        <h2 id="education-title">Education</h2>
+        {education.map(({ data }) => (
+          <div class="item">
+            <div class="item-head">
+              <h3>
+                {data.school}
+                {data.department && <span class="org">, {data.department}</span>}
+              </h3>
+              <p class="when">{formatRange(data.start, data.end)}</p>
+            </div>
+            <p class="where">
+              {data.degree}
+              {data.gpa && ` · GPA ${data.gpa}`}
+            </p>
+            {data.coursework.length > 0 && (
+              <p class="note">Relevant coursework: {data.coursework.join(', ')}</p>
+            )}
+          </div>
+        ))}
+      </section>
+
+      <section aria-labelledby="skills-title">
+        <h2 id="skills-title">Skills</h2>
+        <dl class="skills">
+          {skills.map(({ data }) => (
+            <div>
+              <dt>{data.label}</dt>
+              <dd>{data.items.join(', ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {certifications.length > 0 && (
+        <section aria-labelledby="certifications-title">
+          <h2 id="certifications-title">Certifications</h2>
+          <ul class="certs list-plain" role="list">
+            {certifications.map(({ data }) => (
+              <li>
+                {data.name} <span class="org">· {data.issuer}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .resume {
+    max-width: 56rem;
+    padding-block: var(--hero-space) 1rem;
+  }
+
+  .head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 1rem 2rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  h1 {
+    font: 400 var(--text-title) / 1 var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .role {
+    margin-top: 0.625rem;
+    font-size: var(--text-lede);
+    color: var(--color-muted);
+  }
+
+  .contact {
+    display: grid;
+    justify-items: end;
+    gap: 0.125rem;
+    font-size: var(--text-small);
+  }
+
+  .contact a {
+    text-decoration-color: var(--color-rule);
+  }
+
+  .download {
+    grid-column: 1 / -1;
+  }
+
+  section {
+    padding-top: 2.5rem;
+  }
+
+  h2 {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-rule);
+    font: 400 var(--text-h3) / 1.1 var(--font-serif);
+  }
+
+  .item {
+    padding-top: 1.25rem;
+  }
+
+  .item-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 1.5rem;
+  }
+
+  h3 {
+    font-size: var(--text-role);
+    font-weight: 600;
+  }
+
+  .org {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .when,
+  .where,
+  .note {
+    font: 400 var(--text-meta) / 1.6 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  .item ul {
+    margin-top: 0.5rem;
+    padding-left: 1.125rem;
+    color: var(--color-muted);
+  }
+
+  .item li + li {
+    margin-top: 0.25rem;
+  }
+
+  .skills div {
+    display: grid;
+    grid-template-columns: 13rem 1fr;
+    gap: 1.5rem;
+    padding-top: 0.75rem;
+  }
+
+  .skills dt {
+    font-weight: 600;
+  }
+
+  .skills dd,
+  .certs {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .certs {
+    padding-top: 0.75rem;
+  }
+
+  .certs li + li {
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 47.49em) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+
+    .contact {
+      justify-items: start;
+    }
+
+    .skills div {
+      grid-template-columns: 1fr;
+      gap: 0.125rem;
+    }
+  }
+
+  /* Print, and the PDF: one compact Letter page. The printable width is narrower than the
+     mobile breakpoint, so the header and skills layouts are set explicitly here. */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.45in 0.5in;
+    }
+
+    .resume {
+      max-width: none;
+      padding: 0;
+      font-size: 9pt;
+      line-height: 1.32;
+    }
+
+    .head {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-bottom: 6pt;
+    }
+
+    h1 {
+      font-size: 22pt;
+    }
+
+    .role {
+      margin-top: 1pt;
+      font-size: 10.5pt;
+    }
+
+    .contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 8pt;
+      margin-top: 4pt;
+      font-size: 8.5pt;
+    }
+
+    .contact li + li::before {
+      content: '·' / '';
+      margin-right: 8pt;
+      color: var(--color-faint);
+    }
+
+    .download {
+      display: none;
+    }
+
+    section {
+      padding-top: 8pt;
+    }
+
+    h2 {
+      padding-bottom: 1pt;
+      font-size: 12pt;
+    }
+
+    .item {
+      padding-top: 5pt;
+      break-inside: avoid;
+    }
+
+    h3 {
+      font-size: 9.5pt;
+    }
+
+    .when,
+    .where,
+    .note {
+      font-size: 7.5pt;
+    }
+
+    .item ul {
+      margin-top: 1pt;
+      padding-left: 12pt;
+    }
+
+    .item li + li {
+      margin-top: 0;
+    }
+
+    .skills div {
+      grid-template-columns: 10rem 1fr;
+      gap: 12pt;
+      padding-top: 2pt;
+    }
+
+    .certs {
+      padding-top: 3pt;
+    }
+  }
+</style>

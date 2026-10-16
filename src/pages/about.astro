@@ -1,0 +1,121 @@
+---
+import Button from '../components/Button.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Prose from '../components/Prose.astro';
+import SectionHead from '../components/SectionHead.astro';
+import TagList from '../components/TagList.astro';
+import { Content as Bio, frontmatter } from '../content/about.md';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSkills } from '../lib/content';
+import { stripEmphasis } from '../lib/text';
+import { site } from '../site.config';
+
+const skills = await getSkills();
+const title: string = frontmatter.title ?? 'About';
+---
+
+<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
+<BaseLayout
+  title={`About · ${site.name}`}
+  description={`About ${site.name}, ${site.role.toLowerCase()} in ${site.location}. ${stripEmphasis(site.intro)}`}
+  noindex
+>
+  <div class="container">
+    <PageIntro eyebrow="About" title={title} />
+    <div class="bio">
+      <Prose>
+        <Bio />
+      </Prose>
+    </div>
+
+    <section class="block" aria-labelledby="skills-title">
+      <SectionHead id="skills-title" title="Skills" />
+      <dl class="skills">
+        {skills.map(({ data }) => (
+          <div>
+            <dt>{data.label}</dt>
+            <dd>
+              <TagList items={data.items} variant="text" />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {site.resume && (
+      <section class="block" aria-labelledby="resume-title">
+        <SectionHead id="resume-title" title="Résumé" />
+        <div class="resume">
+          <p>The same experience, education and skills on one page.</p>
+          <div class="actions">
+            <Button href={site.resume}>
+              Download PDF <span aria-hidden="true">↓</span>
+            </Button>
+            <Button href="/resume/" variant="outline">
+              Read it online
+            </Button>
+          </div>
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .bio {
+    margin-top: 2.5rem;
+    font-size: var(--text-lede);
+    line-height: 1.6;
+  }
+
+  .block {
+    padding-top: var(--section-space);
+  }
+
+  .skills div,
+  .resume {
+    display: grid;
+    grid-template-columns: 11.875rem 1fr;
+    gap: 2.25rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .resume {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding-block: 2rem;
+  }
+
+  .resume p {
+    color: var(--color-muted);
+  }
+
+  dt {
+    font: 400 var(--text-meta) / 1.9 var(--font-mono);
+    color: var(--color-faint);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  @media (max-width: 47.49em) {
+    .skills div,
+    .resume {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding-block: 1.25rem;
+    }
+
+    .resume {
+      gap: 1.25rem;
+    }
+  }
+</style>

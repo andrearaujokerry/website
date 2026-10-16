@@ -1,0 +1,23 @@
+# Skills, grouped for the About page and résumé. Placeholder copy from the
+# October 2026 résumé, where languages are listed by proficiency.
+# Schema: src/content.config.ts
+
+- id: languages
+  label: Languages
+  order: 1
+  items: [Python, SQL, JavaScript, TypeScript, Java]
+
+- id: frameworks
+  label: Frameworks and libraries
+  order: 2
+  items: [React, Node.js, Django, Flask, SuiteScript 2.0, PyTorch, Dagster]
+
+- id: tools
+  label: Tools
+  order: 3
+  items: [Git, Jira, Postman, NetSuite, REST APIs, Tableau, Power BI, Cursor, Claude]
+
+- id: practices
+  label: Practices
+  order: 4
+  items: [Agile, Test-driven development, CI/CD]

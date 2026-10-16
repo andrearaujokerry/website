@@ -1,6 +1,10 @@
 ---
 import { site } from '../site.config';
 import ThemeToggle from './ThemeToggle.astro';
+
+// Mark the nav item for the page being viewed (anchor links never count).
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => !href.includes('#') && href === path;
 ---
 
 <header class="site-header">
@@ -22,7 +26,9 @@ import ThemeToggle from './ThemeToggle.astro';
         <ul class="list-plain links" role="list">
           {site.nav.map((item) => (
             <li>
-              <a href={item.href}>{item.label}</a>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
             </li>
           ))}
         </ul>
@@ -112,6 +118,10 @@ import ThemeToggle from './ThemeToggle.astro';
   .links a:hover {
     color: var(--color-ink);
     text-decoration: underline;
+  }
+
+  .links a[aria-current='page'] {
+    color: var(--color-ink);
   }
 
   .actions {

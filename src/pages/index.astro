@@ -10,6 +10,7 @@ import {
   getEducation,
   getFeaturedProjects,
   getJobs,
+  projectLink,
   projectMeta,
 } from '../lib/content';
 import { formatMonth, formatRange } from '../lib/dates';
@@ -29,14 +30,6 @@ const years = jobs.flatMap(({ data }) => [
 ]);
 const experienceSpan = years.length ? `${Math.min(...years)} — ${Math.max(...years)}` : undefined;
 const tints = [1, 2, 3, 4] as const;
-
-// Cards link to a live site or the source when there is one; case-study links come in Phase 5.
-const projectLink = ({ live, source }: { live?: string; source?: string }) =>
-  live
-    ? { label: 'Visit', href: live, external: true }
-    : source
-      ? { label: 'Source', href: source, external: true }
-      : undefined;
 ---
 
 <!-- noindex until launch (WORKPLAN.md, Phase 7). -->
@@ -52,7 +45,11 @@ const projectLink = ({ live, source }: { live?: string; source?: string }) =>
         id="work-title"
         title="Experience"
         note={experienceSpan}
-        more={site.resume ? { label: 'Download résumé (PDF)', href: site.resume } : undefined}
+        more={
+          site.resume
+            ? { label: 'Download résumé (PDF)', href: site.resume, arrow: '↓' }
+            : undefined
+        }
       />
       <ol class="list-plain" role="list">
         {jobs.map(({ data }) => (
@@ -106,17 +103,22 @@ const projectLink = ({ live, source }: { live?: string; source?: string }) =>
     </section>
 
     <section class="block" id="projects" aria-labelledby="projects-title">
-      <SectionHead id="projects-title" title="Projects" note="Selected" />
+      <SectionHead
+        id="projects-title"
+        title="Projects"
+        note="Selected"
+        more={{ label: 'All projects', href: '/projects/', arrow: '→' }}
+      />
       <div class="projects">
-        {projects.map(({ data }, index) => (
+        {projects.map((project, index) => (
           <ProjectCard
-            title={data.title}
-            meta={projectMeta(data)}
-            description={data.description}
-            tech={data.tech}
-            link={projectLink(data.links)}
-            image={data.cover}
-            imageAlt={data.coverAlt}
+            title={project.data.title}
+            meta={projectMeta(project.data)}
+            description={project.data.description}
+            tech={project.data.tech}
+            link={projectLink(project)}
+            image={project.data.cover}
+            imageAlt={project.data.coverAlt}
             tint={tints[index % tints.length]}
           />
         ))}
