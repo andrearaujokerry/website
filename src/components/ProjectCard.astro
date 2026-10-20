@@ -15,15 +15,28 @@ interface Props {
   image?: ImageMetadata;
   imageAlt?: string;
   tint?: 1 | 2 | 3 | 4;
+  /** Heading level for the title: 3 under a section heading (home), 2 directly under the page title. */
+  headingLevel?: 2 | 3;
 }
 
-const { title, meta, description, tech = [], link, image, imageAlt, tint } = Astro.props;
+const {
+  title,
+  meta,
+  description,
+  tech = [],
+  link,
+  image,
+  imageAlt,
+  tint,
+  headingLevel = 3,
+} = Astro.props;
+const Heading = headingLevel === 2 ? 'h2' : 'h3';
 ---
 
 <article class="project">
   <ProjectFrame title={title} image={image} imageAlt={imageAlt} tint={tint} />
   <div class="head">
-    <h3>{title}</h3>
+    <Heading class="title">{title}</Heading>
     {meta && <span class="meta">{meta}</span>}
   </div>
   <p class="description">{description}</p>
@@ -32,6 +45,8 @@ const { title, meta, description, tech = [], link, image, imageAlt, tint } = Ast
     {link && (
       <a href={link.href}>
         {link.label}
+        <!-- "Details" alone is ambiguous when read out of context; name the project. -->
+        <span class="visually-hidden">: {title}</span>
         <span aria-hidden="true">{link.external ? ' ↗' : ' →'}</span>
       </a>
     )}
@@ -53,7 +68,7 @@ const { title, meta, description, tech = [], link, image, imageAlt, tint } = Ast
     margin-top: 1.5rem;
   }
 
-  h3 {
+  .title {
     font: 400 var(--text-h3) / 1.1 var(--font-serif);
     letter-spacing: -0.01em;
   }

@@ -7,6 +7,11 @@ export interface NavItem {
 }
 
 export interface SiteConfig {
+  /**
+   * False until launch: every page carries `noindex` so search engines stay away.
+   * Set to true at launch (WORKPLAN.md, Phase 7).
+   */
+  launched: boolean;
   name: string;
   /** Short line above the headline. */
   role: string;
@@ -29,9 +34,14 @@ export interface SiteConfig {
   };
   /** Public path of the résumé PDF. Leave unset to hide every résumé link. */
   resume?: string;
+  /** Intro copy for pages that aren't driven by a content file. */
+  pages: {
+    projects: { title: string; lede: string };
+  };
 }
 
 export const site: SiteConfig = {
+  launched: false,
   name: 'Andre Araujo-Kerry',
   role: 'Software & data engineer',
   location: 'Boston, MA',
@@ -56,4 +66,10 @@ export const site: SiteConfig = {
   },
   // Printed from /resume/ by `npm run resume:pdf`; contains no phone number or address.
   resume: '/resume.pdf',
+  pages: {
+    projects: {
+      title: "Things I've *built*.",
+      lede: "Tools and studies I've built outside my co-ops. Each page covers what I did and the stack behind it.",
+    },
+  },
 };

@@ -145,25 +145,20 @@ None of these pages are in the demo. They're designed directly in the browser fr
 
 ## Phase 6 — Quality pass
 
-- [ ] **Accessibility**
-  - A Playwright + `@axe-core/playwright` test runs over every page in both themes, with zero violations allowed (in CI).
-  - Manual pass: keyboard only, VoiceOver on macOS and iOS, 200% zoom, reduced motion.
-- [ ] **Performance**
-  - Lighthouse CI (`@lhci/cli`) runs on the built site with the §6 budgets: ≥ 95 in every category on mobile, < 50 KB JavaScript, < 150 KB transfer excluding images.
-  - Confirm the serif font isn't delaying the H1, which is likely the page's largest element (LCP).
-- [ ] **SEO**
-  - A `Seo` component for title, description, canonical URL and Open Graph/Twitter tags.
-  - `@astrojs/sitemap` and `robots.txt`.
-  - JSON-LD `Person` (name, job title, URL, profile links).
-- [ ] **Share images:** a link-preview image per page, generated at build time (Satori + resvg in an Astro endpoint) in the site's style: paper background, serif title.
-- [ ] **Links and markup:** a broken-link check (lychee) and HTML validation (html-validate) in CI.
+- [x] **Accessibility**
+  - `npm run test:a11y`: axe-core (WCAG 2.0–2.2 A/AA plus best practices) on every built page, in both themes, at desktop and phone sizes; any violation fails. *(Puppeteer with the runner's own Chrome instead of Playwright, to avoid a second browser download.)* It caught and fixed: faint placeholder text on project frames and styleguide swatches, and an h1 → h3 jump on `/projects/`.
+  - [ ] Manual pass (yours): VoiceOver on macOS and iOS, 200% zoom, reduced motion. The keyboard-only pass is automated (Phases 4–5).
+- [x] **Performance**: `npm run lighthouse` runs Lighthouse CI on five pages (mobile, 3 runs each) with the §6 budgets. Every page currently scores 100/100/100/100, with LCP ≈ 1.35 s, CLS ≈ 0, TBT 0 ms and about 70 KB transferred (60 KB of it fonts). The serif font doesn't delay the H1.
+- [x] **SEO**: `BaseLayout` sets the title, description, canonical URL, Open Graph and Twitter tags on every page, and the home page adds JSON-LD `Person`. `@astrojs/sitemap` lists the public pages (not the styleguide or 404), and `robots.txt` points to it. Until launch, a single `launched: false` in `src/site.config.ts` adds `noindex` everywhere.
+- [x] **Share images**: `/og/<page>.png` for every public page, rendered at build time with Satori and resvg in the site's style (`src/lib/og.ts`).
+- [x] **Links and markup**: `npm run check:links` checks that every internal link and `#fragment` resolves *(a small script instead of lychee; `--external` also checks outside sites)*, and `npm run check:html` validates every page with html-validate.
 
 **Done when** all of these run in CI, so any PR that regresses one of them fails.
 
 ## Phase 7 — Launch
 
 - [ ] Replace the résumé-based placeholder copy with the final content from Phase 0.
-- [ ] Remove the under-construction `noindex` from every page (search for `noindex`).
+- [ ] Set `launched: true` in `src/site.config.ts` (drops the site-wide `noindex`) and remove `skipAudits: ['is-crawlable']` from `lighthouserc.cjs`.
 - [ ] Regenerate the résumé PDF (`npm run resume:pdf`) so it matches the final content.
 - [ ] Domain:
   - Attach it to the `website` Worker as a custom domain (it's already registered with Cloudflare).

@@ -71,7 +71,7 @@ const posts = [
             data-token={colour.token}
             data-decorative={colour.decorative ? '' : undefined}
           >
-            <span class="chip" style={`background: var(${colour.token})`} />
+            <span class="chip" style={`--swatch: var(${colour.token})`} />
             <div>
               <p class="swatch-name">
                 {colour.name} <code>{colour.token}</code>
@@ -86,7 +86,7 @@ const posts = [
       </ul>
       <div class="tints">
         {[1, 2, 3, 4].map((n) => (
-          <span class="tint" style={`background: var(--tint-${n})`}>
+          <span class="tint" style={`--swatch: var(--tint-${n})`}>
             <code>--tint-{n}</code>
           </span>
         ))}
@@ -313,6 +313,7 @@ const posts = [
     height: 3.5rem;
     border: 1px solid var(--color-rule);
     border-radius: 50%;
+    background: var(--swatch);
   }
 
   .swatch-name {
@@ -343,6 +344,12 @@ const posts = [
     aspect-ratio: 16 / 10;
     padding: 0.75rem;
     border-radius: var(--radius-frame);
+    background: var(--swatch);
+  }
+
+  /* Small text on a tint needs the darker muted colour to reach 4.5:1. */
+  .tint code {
+    color: var(--color-muted);
   }
 
   .specimens > div {

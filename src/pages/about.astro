@@ -14,11 +14,10 @@ const skills = await getSkills();
 const title: string = frontmatter.title ?? 'About';
 ---
 
-<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
 <BaseLayout
   title={`About · ${site.name}`}
   description={`About ${site.name}, ${site.role.toLowerCase()} in ${site.location}. ${stripEmphasis(site.intro)}`}
-  noindex
+  image="about"
 >
   <div class="container">
     <PageIntro eyebrow="About" title={title} />

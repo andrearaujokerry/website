@@ -9,11 +9,31 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description: string;
-  /** Keep the page out of search results. */
+  /** Keep this page out of search results even after launch (the styleguide, the 404 page). */
   noindex?: boolean;
+  /** Link-preview image: a slug from src/lib/og.ts, served at /og/<slug>.png. */
+  image?: string;
+  /** Structured data for search engines, rendered as JSON-LD. */
+  jsonLd?: Record<string, unknown>;
+  /** False for pages without a stable address of their own, like the 404 page. */
+  canonical?: boolean;
 }
 
-const { title = site.name, description, noindex = false } = Astro.props;
+const {
+  title = site.name,
+  description,
+  noindex = false,
+  image = 'home',
+  jsonLd,
+  canonical: hasCanonical = true,
+} = Astro.props;
+
+// Absolute URLs on the production domain, as search engines and link previews expect.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(`/og/${image}.png`, Astro.site);
+const hideFromSearch = noindex || !site.launched;
+// Escape "<" so the JSON can never close its <script> tag early.
+const structuredData = jsonLd && JSON.stringify(jsonLd).replaceAll('<', '\\u003c');
 ---
 
 <!doctype html>
@@ -23,9 +43,22 @@ const { title = site.name, description, noindex = false } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {hasCanonical && <link rel="canonical" href={canonical} />}
+    {hideFromSearch && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {hasCanonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${title}: ${description}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {structuredData && <script type="application/ld+json" set:html={structuredData} />}
     <!-- Preload only what the first screen needs: the regular serif (headline) and the sans (body). -->
     <Font cssVariable="--font-serif" preload={[{ weight: 400, style: 'normal' }]} />
     <Font cssVariable="--font-sans" preload />

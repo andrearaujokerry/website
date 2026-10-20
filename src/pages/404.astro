@@ -5,7 +5,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../site.config';
 ---
 
-<BaseLayout title={`Page not found · ${site.name}`} description="This page doesn't exist." noindex>
+<BaseLayout
+  title={`Page not found · ${site.name}`}
+  description="This page doesn't exist."
+  noindex
+  canonical={false}
+>
   <div class="container">
     <PageIntro
       eyebrow="404"

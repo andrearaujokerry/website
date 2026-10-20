@@ -30,10 +30,21 @@ const years = jobs.flatMap(({ data }) => [
 ]);
 const experienceSpan = years.length ? `${Math.min(...years)} — ${Math.max(...years)}` : undefined;
 const tints = [1, 2, 3, 4] as const;
+
+// Structured data so search engines can show who this site is about.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: site.role,
+  url: Astro.site?.href,
+  homeLocation: { '@type': 'Place', name: site.location },
+  alumniOf: education.map(({ data }) => ({ '@type': 'CollegeOrUniversity', name: data.school })),
+  sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
+};
 ---
 
-<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
-<BaseLayout description={stripEmphasis(site.intro)} noindex>
+<BaseLayout description={stripEmphasis(site.intro)} jsonLd={person}>
   <div class="container">
     <Hero />
     <div class="facts">

@@ -12,8 +12,8 @@ export default defineConfig([
   // Accessibility rules for .astro templates (backed by eslint-plugin-jsx-a11y-x).
   eslintPluginAstro.configs['jsx-a11y-recommended'],
   {
-    // Build scripts and config files run in Node.
-    files: ['scripts/**', '*.config.{js,mjs}'],
+    // Build scripts, tests and config files run in Node.
+    files: ['scripts/**', 'tests/**', '*.config.{js,mjs}', 'lighthouserc.cjs'],
     languageOptions: { globals: globals.node },
   },
   {
