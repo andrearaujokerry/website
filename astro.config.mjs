@@ -1,9 +1,16 @@
 // @ts-check
+import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+
+// Pages that never belong in search results.
+const unlisted = ['/styleguide/', '/404/'];
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://andrearaujokerry.com',
+  integrations: [
+    sitemap({ filter: (page) => !unlisted.some((path) => new URL(page).pathname === path) }),
+  ],
   // Downloaded at build time and self-hosted, with metric-matched fallbacks.
   fonts: [
     {

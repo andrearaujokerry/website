@@ -36,8 +36,11 @@ const links = [
 ].filter((link) => Boolean(link)) as { label: string; href: string }[];
 ---
 
-<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
-<BaseLayout title={`${data.title} · ${site.name}`} description={data.tagline} noindex>
+<BaseLayout
+  title={`${data.title} · ${site.name}`}
+  description={data.tagline}
+  image={`project-${project.id}`}
+>
   <article class="container">
     <PageIntro eyebrow="Project" title={data.title} lede={data.tagline}>
       {links.length > 0 && (

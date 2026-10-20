@@ -64,6 +64,7 @@ const wide = size === 'wide';
     padding: 1.5rem;
     font: italic 400 clamp(2rem, 1.5rem + 2vw, 3rem) / 1.05 var(--font-serif);
     text-align: center;
-    color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+    /* Decorative, but still visible text: --color-faint clears 3:1 (large text) on every tint. */
+    color: var(--color-faint);
   }
 </style>

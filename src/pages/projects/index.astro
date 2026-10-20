@@ -9,17 +9,16 @@ const projects = await getProjects();
 const tints = [1, 2, 3, 4] as const;
 ---
 
-<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
 <BaseLayout
   title={`Projects · ${site.name}`}
   description={`Projects by ${site.name}: tools and studies built outside of work.`}
-  noindex
+  image="projects"
 >
   <div class="container">
     <PageIntro
       eyebrow="Projects"
-      title="Things I've *built*."
-      lede="Tools and studies I've built outside my co-ops. Each page covers what I did and the stack behind it."
+      title={site.pages.projects.title}
+      lede={site.pages.projects.lede}
     />
     <div class="projects">
       {projects.map((project, index) => (
@@ -32,6 +31,7 @@ const tints = [1, 2, 3, 4] as const;
           image={project.data.cover}
           imageAlt={project.data.coverAlt}
           tint={tints[index % tints.length]}
+          headingLevel={2}
         />
       ))}
     </div>

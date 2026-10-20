@@ -22,11 +22,10 @@ const siteHost = Astro.site?.host ?? '';
 const display = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 ---
 
-<!-- noindex until launch (WORKPLAN.md, Phase 7). -->
 <BaseLayout
   title={`Résumé · ${site.name}`}
   description={`Résumé of ${site.name}, ${site.role.toLowerCase()} in ${site.location}.`}
-  noindex
+  image="resume"
 >
   <div class="container">
     <article class="resume">

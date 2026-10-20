@@ -31,3 +31,21 @@ jobs:
         run: npm run format:check
       - name: Build
         run: npm run build
+      # Quality checks on the built site (WORKPLAN.md, Phase 6). Chrome comes with the runner.
+      - name: Accessibility (axe on every page, both themes, desktop and phone)
+        run: npm run test:a11y
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+      - name: Links and #fragments
+        run: npm run check:links
+      - name: HTML validation
+        run: npm run check:html
+      - name: Lighthouse (mobile scores, Core Web Vitals and page-weight budgets)
+        run: npm run lighthouse
+      - name: Keep the Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/reports
+          if-no-files-found: ignore

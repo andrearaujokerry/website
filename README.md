@@ -20,7 +20,19 @@ npm run build         # production build into dist/
 npm run resume:pdf    # rebuild public/resume.pdf from /resume/ (needs Google Chrome)
 ```
 
-CI runs `check`, `lint`, `format:check` and `build` on every pull request.
+## Quality checks
+
+These run on every pull request after the build, and any failure blocks the merge. Run them locally after `npm run build`:
+
+```sh
+npm run quality       # all four checks below
+npm run test:a11y     # axe accessibility checks: every page, both themes, desktop and phone
+npm run check:links   # every internal link and #fragment resolves (add -- --external for outside links)
+npm run check:html    # HTML validation (html-validate)
+npm run lighthouse    # Lighthouse on mobile: scores, Core Web Vitals and page-weight budgets
+```
+
+The browser-based checks use Google Chrome; set `CHROME_PATH` if it isn't in the default macOS location. Lighthouse reports are saved to `.lighthouseci/reports/`.
 
 ## Editing content
 
