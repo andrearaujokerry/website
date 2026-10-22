@@ -1,0 +1,7 @@
+# Response headers for the static files (Cloudflare reads this file at deploy; it isn't served).
+# Rules don't apply to responses from worker/index.ts, which sets its own.
+
+# The copies on workers.dev (production and branch previews) stay out of search results, so only
+# https://andrearaujokerry.com is indexed.
+https://:worker.:account.workers.dev/*
+  X-Robots-Tag: noindex

@@ -9,9 +9,6 @@ module.exports = {
       settings: {
         // Chrome's sandbox can't start on GitHub's Ubuntu runners.
         chromeFlags: process.env.CI ? '--no-sandbox' : '',
-        // Until launch every page is deliberately noindex, which this audit would penalise.
-        // Remove this line at launch (WORKPLAN.md, Phase 7).
-        skipAudits: ['is-crawlable'],
       },
     },
     assert: {
