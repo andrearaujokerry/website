@@ -10,7 +10,7 @@ start: 2024-07
 end: present
 status: live
 featured: true
-order: 1
+order: 2
 tech: [Python, SQL, TypeScript]
 highlights:
   - Built a Python text-analysis pipeline that parses LinkedIn posts and

@@ -20,6 +20,14 @@ npm run build         # production build into dist/
 npm run resume:pdf    # rebuild public/resume.pdf from /resume/ (needs Google Chrome)
 ```
 
+## Hosting
+
+The site is a Cloudflare Worker (`wrangler.jsonc`). Almost every request is a static file from `dist/`. The exception is the [Terminal](https://github.com/andrearaujokerry/bloomberg), which runs on Render and appears at **`/projects/terminal`**. A small proxy in `worker/index.ts` forwards that page to Render, along with the root paths the terminal loads and calls: `/assets/`, `/api/` and `/ws/` (including its WebSocket). So:
+
+- **Those paths are reserved.** Don't add pages or files under `/projects/terminal`, `/api/`, `/ws/` or `/assets/`; `npm run check:links` fails if a page lands on one.
+- **If the terminal moves**, change `TERMINAL_ORIGIN` in `wrangler.jsonc`.
+- **To try the proxy locally**, run `npx wrangler dev` and open http://localhost:8787/projects/terminal.
+
 ## Quality checks
 
 These run on every pull request after the build, and any failure blocks the merge. Run them locally after `npm run build`:

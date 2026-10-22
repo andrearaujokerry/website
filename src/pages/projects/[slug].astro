@@ -31,7 +31,7 @@ const facts = [
 ].filter((fact) => fact.value);
 
 const links = [
-  data.links.live && { label: 'Visit the site', href: data.links.live },
+  data.links.live && { label: 'See it live', href: data.links.live },
   data.links.source && { label: 'Source code', href: data.links.source },
 ].filter((link) => Boolean(link)) as { label: string; href: string }[];
 ---

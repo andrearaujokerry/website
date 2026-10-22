@@ -11,6 +11,10 @@ import { dist } from './lib/serve-dist.mjs';
 const SITE = 'https://andrearaujokerry.com';
 const checkExternal = process.argv.includes('--external');
 
+// Served at runtime by the Worker's terminal proxy (worker/index.ts), not from dist/. Keep in sync
+// with TERMINAL_PATHS there and `run_worker_first` in wrangler.jsonc.
+const PROXIED = /^\/(?:projects\/terminal(?:\/.*)?|api\/.*|ws\/.*|assets\/.*)$/;
+
 const htmlFiles = (await readdir(dist, { recursive: true })).filter((f) => f.endsWith('.html'));
 const pages = new Map(); // URL path -> HTML
 for (const file of htmlFiles) {
@@ -38,6 +42,11 @@ const errors = new Set();
 const external = new Map(); // URL -> pages that link to it
 
 for (const [pagePath, html] of pages) {
+  if (PROXIED.test(pagePath)) {
+    errors.add(
+      `${pagePath}: built at a path the Worker sends to the terminal, so no one can reach it`,
+    );
+  }
   // href, src and content="https://…" (Open Graph) attributes.
   const urls = [
     ...[...html.matchAll(/\s(?:href|src)="([^"]+)"/g)].map((m) => m[1]),
@@ -53,6 +62,7 @@ for (const [pagePath, html] of pages) {
       continue;
     }
     const target = decodeURIComponent(url.pathname);
+    if (PROXIED.test(target)) continue;
     if (!(await exists(target))) {
       errors.add(`${pagePath}: broken link ${value}`);
       continue;

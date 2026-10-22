@@ -10,7 +10,7 @@ start: 2024-02
 end: 2024-04
 status: complete
 featured: true
-order: 2
+order: 3
 tech: [Python, scikit-learn]
 highlights:
   - Used demographic characteristics to predict the outcomes of adverse drug

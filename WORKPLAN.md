@@ -50,6 +50,7 @@ Week 5  Phase 6 + 7    launch
 | 7 | Résumé | A static PDF at launch; generate it from the experience data later (P2) | Keeps launch simple. |
 | 8 | Analytics | Cloudflare Web Analytics | Free, cookie-free and from the same vendor as hosting. Alternatives: Plausible (paid), Umami (self-hosted). |
 | 9 | Tooling | npm and Node 22, Prettier, ESLint (`eslint-plugin-astro`), `astro check` | Covers §10's "type-check, lint, build". |
+| 10 | The Terminal app | Served at `/projects/terminal` through a proxy in the site's Worker (`worker/index.ts`) to Render | Keeps visitors on this domain with no changes to the terminal. It can't run on this host itself (it needs a persistent Node server, WebSockets and Postgres) and refuses to be framed. Reserves `/api/`, `/ws/` and `/assets/` at the root. *(Added Oct 22 2026.)* |
 
 ---
 
