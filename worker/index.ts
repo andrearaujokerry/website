@@ -20,6 +20,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (!TERMINAL_PATHS.test(url.pathname)) return env.ASSETS.fetch(request);
+    if (!env.TERMINAL_ORIGIN) {
+      // Say what's wrong instead of crashing (e.g. a preview without previews.vars).
+      return new Response('TERMINAL_ORIGIN is not set for this deployment (wrangler.jsonc).', {
+        status: 500,
+        headers: { 'content-type': 'text/plain; charset=utf-8' },
+      });
+    }
     return proxyToTerminal(request, url, env.TERMINAL_ORIGIN);
   },
 };

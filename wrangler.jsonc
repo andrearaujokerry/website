@@ -26,7 +26,11 @@
     // The terminal (github.com/andrearaujokerry/bloomberg) on Render, served at /projects/terminal.
     "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
   },
-  // Branch builds run `wrangler preview` (Worker Previews), which requires this block.
-  // Empty: previews reuse the settings above.
-  "previews": {},
+  // Branch builds run `wrangler preview` (Worker Previews), which requires this block. Previews
+  // reuse "assets" and the compatibility settings above, but NOT "vars", so repeat them here.
+  "previews": {
+    "vars": {
+      "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
+    },
+  },
 }
