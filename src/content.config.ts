@@ -53,7 +53,12 @@ const projects = defineCollection({
         highlights: z.array(z.string()).default([]),
         links: z
           .object({
-            live: z.url().optional(),
+            /** A full URL, or a path on this site such as /projects/terminal. */
+            live: z
+              .union([z.url(), z.string().regex(/^\/[^/]/)], {
+                error: 'Use a full URL or a path on this site, e.g. /projects/terminal',
+              })
+              .optional(),
             source: z.url().optional(),
           })
           .default({}),

@@ -2,16 +2,35 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // Must match the Worker's name in the Cloudflare dashboard.
   "name": "website",
+  // Worker code that only runs for the paths in run_worker_first: the terminal proxy.
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // Build the site before every deploy and preview upload.
   "build": { "command": "npm run build" },
-  // A static, assets-only Worker: serve Astro's build output as-is.
+  // Everything else is served straight from Astro's build output.
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     // Unknown paths get dist/404.html (added in Phase 5) with a 404 status.
     "not_found_handling": "404-page",
+    // The terminal's page and the root paths it loads and calls go to worker/index.ts.
+    "run_worker_first": [
+      "/projects/terminal",
+      "/projects/terminal/*",
+      "/api/*",
+      "/ws/*",
+      "/assets/*",
+    ],
   },
-  // Branch builds run `wrangler preview` (Worker Previews), which requires this block.
-  // Empty: previews reuse the settings above.
-  "previews": {},
+  "vars": {
+    // The terminal (github.com/andrearaujokerry/bloomberg) on Render, served at /projects/terminal.
+    "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
+  },
+  // Branch builds run `wrangler preview` (Worker Previews), which requires this block. Previews
+  // reuse "assets" and the compatibility settings above, but NOT "vars", so repeat them here.
+  "previews": {
+    "vars": {
+      "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
+    },
+  },
 }
