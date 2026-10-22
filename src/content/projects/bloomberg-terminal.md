@@ -17,12 +17,10 @@ tech: [TypeScript, React, Fastify, PostgreSQL, WebSockets]
 highlights:
   - A real-time quote plant streams over WebSockets to 38 function screens, driven from a
     keyboard-first command line.
-  - Bitemporal market data in PostgreSQL (155 tables, 20 migrations), with entitlements and
-    row-level security that keep each firm's data to itself.
-  - A custom canvas chart engine, and a provenance record on every number showing which source,
-    message and timestamp produced it.
-  - Runs offline from recorded captures of public sources, covered by 6,343 unit and integration
-    tests and 47 browser tests.
+  - Bitemporal market data in PostgreSQL (155 tables), with entitlements and row-level security
+    between firms.
+  - A canvas chart engine, provenance on every number, and 6,343 unit and integration tests plus
+    47 browser tests.
 links:
   live: /projects/terminal
   source: https://github.com/andrearaujokerry/bloomberg

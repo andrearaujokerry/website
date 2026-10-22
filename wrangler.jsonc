@@ -7,6 +7,16 @@
   "compatibility_date": "2026-10-01",
   // Build the site before every deploy and preview upload.
   "build": { "command": "npm run build" },
+  // The domain, registered with Cloudflare. Each deploy attaches both hostnames, creating their DNS
+  // records and certificates. A Redirect Rule in the dashboard sends www to the bare domain.
+  "routes": [
+    { "pattern": "andrearaujokerry.com", "custom_domain": true },
+    { "pattern": "www.andrearaujokerry.com", "custom_domain": true },
+  ],
+  // Once routes are set, Wrangler turns these off unless they're stated. Keep the workers.dev
+  // address (useful on networks that block new domains) and the branch previews.
+  "workers_dev": true,
+  "preview_urls": true,
   // Everything else is served straight from Astro's build output.
   "assets": {
     "directory": "./dist",

@@ -8,8 +8,8 @@ export interface NavItem {
 
 export interface SiteConfig {
   /**
-   * False until launch: every page carries `noindex` so search engines stay away.
-   * Set to true at launch (WORKPLAN.md, Phase 7).
+   * Whether search engines may index the site. While false, every page carries `noindex`.
+   * Turned on at launch (WORKPLAN.md, Phase 7).
    */
   launched: boolean;
   name: string;
@@ -41,7 +41,7 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  launched: false,
+  launched: true,
   name: 'Andre Araujo-Kerry',
   role: 'Software & data engineer',
   location: 'Boston, MA',

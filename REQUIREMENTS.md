@@ -117,10 +117,10 @@ Three design directions are mocked up in [`demos/`](demos/README.md).
 CMS or admin UI, user accounts, comments, newsletter, e-commerce, multiple languages.
 
 ## 12. Launch checklist (definition of done)
-- [ ] Every P0 above is implemented.
+- [ ] Every P0 above is implemented. *(All but two that wait on content: a LinkedIn link and project screenshots.)*
 - [ ] Real content is in place: bio, roles, at least 3 projects with screenshots, résumé PDF.
-- [ ] Lighthouse ≥ 95 (mobile) and zero axe violations on every page.
-- [ ] Tested on iOS Safari, Android Chrome and desktop Chrome, Firefox and Safari.
+- [x] Lighthouse ≥ 95 (mobile) and zero axe violations on every page. *(Oct 22 2026: 100 in all four categories on every public page, and no axe violations in either theme.)*
+- [ ] Tested on iOS Safari, Android Chrome and desktop Chrome, Firefox and Safari. *(Automated in all three engines; real phones still to do.)*
 - [ ] Custom domain live with HTTPS, and the social share preview checked.
 
 ## 13. Open questions

@@ -158,15 +158,15 @@ None of these pages are in the demo. They're designed directly in the browser fr
 
 ## Phase 7 — Launch
 
-- [ ] Replace the résumé-based placeholder copy with the final content from Phase 0.
-- [ ] Set `launched: true` in `src/site.config.ts` (drops the site-wide `noindex`) and remove `skipAudits: ['is-crawlable']` from `lighthouserc.cjs`.
-- [ ] Regenerate the résumé PDF (`npm run resume:pdf`) so it matches the final content.
+- [ ] Replace the résumé-based placeholder copy with the final content from Phase 0. *Also still missing: a LinkedIn URL (`links.linkedin` in `src/site.config.ts`) and project screenshots.*
+- [x] Set `launched: true` in `src/site.config.ts` (drops the site-wide `noindex`) and remove `skipAudits: ['is-crawlable']` from `lighthouserc.cjs`. *(`public/_headers` now keeps the workers.dev copies out of search results instead.)*
+- [ ] Regenerate the résumé PDF (`npm run resume:pdf`) so it matches the final content. *(Regenerated Oct 22 2026 to add the Terminal. To keep it on one page, the Terminal has three shorter bullets and the print spacing is slightly tighter. Run it again after the final copy; it now stops with an error if the résumé no longer fits on one page.)*
 - [ ] Domain:
-  - Attach it to the `website` Worker as a custom domain (it's already registered with Cloudflare).
-  - Confirm HTTPS.
-  - Redirect `www` → the bare domain.
-- [ ] Turn on Cloudflare Web Analytics.
-- [ ] Test on iOS Safari, Android Chrome, and desktop Chrome, Firefox and Safari.
+  - Attach it to the `website` Worker as a custom domain (it's already registered with Cloudflare). *(Set up in `wrangler.jsonc` for the bare domain and `www`; the first deploy after the Phase 7 merge attaches both.)*
+  - Confirm HTTPS. *(In the dashboard, check SSL/TLS → Edge Certificates → Always Use HTTPS is on.)*
+  - Redirect `www` → the bare domain. *(In the dashboard: andrearaujokerry.com → Rules → create a Redirect Rule from the "Redirect from WWW to root" template, as a 301.)*
+- [ ] Turn on Cloudflare Web Analytics. *(In the dashboard: Web Analytics → Add a site → pick andrearaujokerry.com. Once it's on, the page source should include `cloudflareinsights`.)*
+- [ ] Test on iOS Safari, Android Chrome, and desktop Chrome, Firefox and Safari. *(Automated pass, Oct 22 2026: every page in Chrome, Firefox and WebKit (Safari's engine) at desktop, phone and 320 px sizes. No sideways scrolling, console errors or missing fonts, and the theme toggle, menu, email links and skip link all work. Still to do: a look on a real iPhone and Android phone.)*
 - [ ] Check link previews (LinkedIn Post Inspector, and pasting the URL into Slack or iMessage).
 - [ ] Tick every box in REQUIREMENTS §12, then tag the release `v1.0.0`.
 

@@ -22,7 +22,15 @@ npm run resume:pdf    # rebuild public/resume.pdf from /resume/ (needs Google Ch
 
 ## Hosting
 
-The site is a Cloudflare Worker (`wrangler.jsonc`). Almost every request is a static file from `dist/`. The exception is the [Terminal](https://github.com/andrearaujokerry/bloomberg), which runs on Render and appears at **`/projects/terminal`**. A small proxy in `worker/index.ts` forwards that page to Render, along with the root paths the terminal loads and calls: `/assets/`, `/api/` and `/ws/` (including its WebSocket). So:
+The site is a Cloudflare Worker (`wrangler.jsonc`) at **https://andrearaujokerry.com**. Every merge to `main` deploys it, and every branch gets a preview at `https://<branch>-website.andre-araujo-kerry.workers.dev`.
+
+- **Domain:** each deploy attaches `andrearaujokerry.com` and `www.andrearaujokerry.com` (`routes` in `wrangler.jsonc`). A Redirect Rule in the Cloudflare dashboard sends `www` to the bare domain.
+- **workers.dev:** the site is also at https://website.andre-araujo-kerry.workers.dev, which helps on networks that block new domains. `public/_headers` keeps that copy and the previews out of search results.
+- **Analytics:** Cloudflare Web Analytics, set up in the dashboard rather than in the code.
+
+### The Terminal
+
+Almost every request is a static file from `dist/`. The exception is the [Terminal](https://github.com/andrearaujokerry/bloomberg), which runs on Render and appears at **`/projects/terminal`**. A small proxy in `worker/index.ts` forwards that page to Render, along with the root paths the terminal loads and calls: `/assets/`, `/api/` and `/ws/` (including its WebSocket). So:
 
 - **Those paths are reserved.** Don't add pages or files under `/projects/terminal`, `/api/`, `/ws/` or `/assets/`; `npm run check:links` fails if a page lands on one.
 - **If the terminal moves**, change `TERMINAL_ORIGIN` in `wrangler.jsonc`.
@@ -56,4 +64,4 @@ The browser-based checks use Google Chrome; set `CHROME_PATH` if it isn't in the
 
 The rules for every field are in `src/content.config.ts`, and `npm run build` names the file and field if something is wrong. Set `draft: true` on an entry to hide it from the live site while you work on it; drafts still show in `npm run dev`. Templates are in [WORKPLAN.md, Appendix A](WORKPLAN.md#appendix-a--content-templates).
 
-The résumé at `/resume/` is generated from the same content. After changing jobs, projects, education or skills, run `npm run resume:pdf` and commit the updated `public/resume.pdf` (set `CHROME_PATH` if Chrome isn't in the default macOS location).
+The résumé at `/resume/` is generated from the same content. After changing jobs, projects, education or skills, run `npm run resume:pdf` and commit the updated `public/resume.pdf` (set `CHROME_PATH` if Chrome isn't in the default macOS location). The résumé must fit on one page: if it doesn't, the command stops with an error and keeps the old PDF.
