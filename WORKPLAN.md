@@ -153,6 +153,10 @@ None of these pages are in the demo. They're designed directly in the browser fr
 - [x] **SEO**: `BaseLayout` sets the title, description, canonical URL, Open Graph and Twitter tags on every page, and the home page adds JSON-LD `Person`. `@astrojs/sitemap` lists the public pages (not the styleguide or 404), and `robots.txt` points to it. Until launch, a single `launched: false` in `src/site.config.ts` adds `noindex` everywhere.
 - [x] **Share images**: `/og/<page>.png` for every public page, rendered at build time with Satori and resvg in the site's style (`src/lib/og.ts`).
 - [x] **Links and markup**: `npm run check:links` checks that every internal link and `#fragment` resolves *(a small script instead of lychee; `--external` also checks outside sites)*, and `npm run check:html` validates every page with html-validate.
+- [x] **Tests** *(added Oct 27 2026)*, in Vitest, as Astro recommends:
+  - `npm test` (`tests/unit/`, no build): helpers, content schemas and ordering, every component and the layout via Astro's Container API, share images, and the Worker's Terminal proxy plus `wrangler.jsonc`.
+  - `npm run test:site` (`tests/site/`, after a build): every built page in Chrome, covering SEO tags, the sitemap, privacy (no whole email address, phone number or street address), theme, phone menu, email links, keyboard, jumping to sections, no sideways scrolling from 320 px, 44 px touch targets, reduced motion, the printed résumé, and axe (moved here from `tests/a11y.test.mjs`).
+  - Writing them turned up one gap: content links accepted any URL scheme, including `javascript:`. They're now http(s) only (`z.httpUrl()` in `src/content.config.ts`).
 
 **Done when** all of these run in CI, so any PR that regresses one of them fails.
 

@@ -17,6 +17,7 @@ npm run check         # type-check
 npm run lint          # ESLint, including accessibility rules
 npm run format        # format with Prettier
 npm run build         # production build into dist/
+npm test              # unit and component tests (no build needed)
 npm run resume:pdf    # rebuild public/resume.pdf from /resume/ (needs Google Chrome)
 ```
 
@@ -36,13 +37,26 @@ Almost every request is a static file from `dist/`. The exception is the [Termin
 - **If the terminal moves**, change `TERMINAL_ORIGIN` in `wrangler.jsonc`.
 - **To try the proxy locally**, run `npx wrangler dev` and open http://localhost:8787/projects/terminal.
 
-## Quality checks
+## Tests and quality checks
 
-These run on every pull request after the build, and any failure blocks the merge. Run them locally after `npm run build`:
+All of these run on every pull request, and any failure blocks the merge.
+
+**Unit and component tests** (`tests/unit/`) need no build and take a few seconds:
 
 ```sh
-npm run quality       # all four checks below
-npm run test:a11y     # axe accessibility checks: every page, both themes, desktop and phone
+npm test              # run them once
+npm run test:watch    # rerun them as you edit
+```
+
+They cover the date and text helpers, the content rules (schemas, drafts, ordering), every component and the page layout (rendered with Astro's Container API, including settings today's content doesn't use), the share images, and the Worker's Terminal proxy along with the routing in `wrangler.jsonc`.
+
+**Site tests and checks** run against the build, so run `npm run build` first:
+
+```sh
+npm run quality       # everything below
+npm run test:site     # the built pages in Chrome (tests/site/): content, SEO, privacy, theme, menu,
+                      # keyboard, layout, print, and axe accessibility
+npm run test:a11y     # just the axe checks: every page, both themes, desktop and phone
 npm run check:links   # every internal link and #fragment resolves (add -- --external for outside links)
 npm run check:html    # HTML validation (html-validate)
 npm run lighthouse    # Lighthouse on mobile: scores, Core Web Vitals and page-weight budgets
