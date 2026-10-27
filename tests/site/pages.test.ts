@@ -248,6 +248,12 @@ describe('projects', () => {
       expect(label).toBe(document.querySelector('#case-study-title') ? 'Case study' : 'Details');
     });
 
+    test('has the hidden backdrop its card’s tile grows into when opened', () => {
+      const backdrops = document.querySelectorAll('.transition-backdrop');
+      expect(backdrops).toHaveLength(1);
+      expect(backdrops[0].getAttribute('aria-hidden')).toBe('true');
+    });
+
     test('previous and next follow the projects page order', () => {
       const at = order.indexOf(path);
       const previous = document.querySelector('.pager a.previous');

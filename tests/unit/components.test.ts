@@ -3,7 +3,7 @@
 // availability note, a LinkedIn link, no résumé, the pre-launch noindex…
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { parseHTML } from 'linkedom';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import Button from '../../src/components/Button.astro';
 import Eyebrow from '../../src/components/Eyebrow.astro';
 import FactsStrip from '../../src/components/FactsStrip.astro';
@@ -23,6 +23,18 @@ import { site, type SiteConfig } from '../../src/site.config';
 
 const SITE = 'https://andrearaujokerry.com';
 const container = await AstroContainer.create({ astroConfig: { site: SITE } });
+
+// The layout lists the projects for its page transitions. Outside a build Astro's content store
+// is empty, so give it two: "second" is featured, so it comes first.
+vi.mock('astro:content', () => ({
+  getCollection: async (name: string) =>
+    name === 'projects'
+      ? [
+          { id: 'first', data: { featured: false, order: 100, start: new Date('2026-01-01') } },
+          { id: 'second', data: { featured: true, order: 1, start: new Date('2024-01-01') } },
+        ]
+      : [],
+}));
 
 type Component = Parameters<typeof container.renderToString>[0];
 interface Options {
@@ -568,5 +580,30 @@ describe('BaseLayout', () => {
     expect(document.querySelector('link[rel="sitemap"]')?.getAttribute('href')).toBe(
       '/sitemap-index.xml',
     );
+  });
+
+  test('page transitions: four decorative tiles, hidden from screen readers', async () => {
+    const { document } = await page();
+    const tiles = document.querySelector('.transition-tiles');
+    expect(tiles?.getAttribute('aria-hidden')).toBe('true');
+    expect(tiles?.children).toHaveLength(4);
+  });
+
+  test('page transitions: the script knows the row of pages, projects in their order', async () => {
+    const { document } = await page();
+    const script = [...document.head.querySelectorAll('script')].find((s) =>
+      s.textContent?.includes('pagereveal'),
+    );
+    const row: unknown = JSON.parse(
+      script?.textContent?.match(/const pages = (\[[^\]]*\])/)?.[1] ?? '[]',
+    );
+    expect(row).toEqual([
+      '/',
+      '/projects/',
+      '/projects/second/',
+      '/projects/first/',
+      '/about/',
+      '/resume/',
+    ]);
   });
 });
