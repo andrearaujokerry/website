@@ -15,12 +15,15 @@ const endMonth = z.union([z.literal('present'), month], {
   error: 'Use YYYY-MM, for example 2025-08, or "present"',
 });
 
+/** A web address. Only http(s), so a link in the content can never run a script (javascript:). */
+const webUrl = z.httpUrl();
+
 const jobs = defineCollection({
   loader: file('src/content/jobs.yaml'),
   schema: z.object({
     role: z.string(),
     company: z.string(),
-    url: z.url().optional(),
+    url: webUrl.optional(),
     location: z.string(),
     start: month,
     end: endMonth,
@@ -55,11 +58,11 @@ const projects = defineCollection({
           .object({
             /** A full URL, or a path on this site such as /projects/terminal. */
             live: z
-              .union([z.url(), z.string().regex(/^\/[^/]/)], {
+              .union([webUrl, z.string().regex(/^\/[^/]/)], {
                 error: 'Use a full URL or a path on this site, e.g. /projects/terminal',
               })
               .optional(),
-            source: z.url().optional(),
+            source: webUrl.optional(),
           })
           .default({}),
         /** 16:10 screenshot, at least 1600 × 1000 px. */
@@ -104,7 +107,7 @@ const certifications = defineCollection({
   schema: z.object({
     name: z.string(),
     issuer: z.string(),
-    url: z.url().optional(),
+    url: webUrl.optional(),
     date: month.optional(),
   }),
 });

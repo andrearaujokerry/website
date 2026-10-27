@@ -16,11 +16,14 @@
     "format:check": "prettier --check .",
     "astro": "astro",
     "resume:pdf": "astro build && node scripts/resume-pdf.mjs",
-    "test:a11y": "node --test \"tests/**/*.test.mjs\"",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:site": "vitest run --project site",
+    "test:a11y": "vitest run --project site a11y",
     "check:links": "node scripts/check-links.mjs",
     "check:html": "html-validate \"dist/**/*.html\"",
     "lighthouse": "lhci autorun --config=lighthouserc.cjs",
-    "quality": "npm run test:a11y && npm run check:links && npm run check:html && npm run lighthouse"
+    "quality": "npm run test:site && npm run check:links && npm run check:html && npm run lighthouse"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -39,12 +42,14 @@
     "eslint-plugin-jsx-a11y-x": "^0.2.0",
     "globals": "^17.13.0",
     "html-validate": "^11.17.0",
+    "linkedom": "^0.18.14",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
     "puppeteer-core": "^25.14.0",
     "satori": "^0.63.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.2",
+    "vitest": "^5.0.5",
     "wrangler": "^4.150.0"
   }
 }
