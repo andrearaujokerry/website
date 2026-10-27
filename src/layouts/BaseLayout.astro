@@ -2,9 +2,11 @@
 import { Font } from 'astro:assets';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import { getProjects } from '../lib/content';
 import { site } from '../site.config';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import '../styles/transitions.css';
 
 interface Props {
   title?: string;
@@ -34,6 +36,15 @@ const ogImage = new URL(`/og/${image}.png`, Astro.site);
 const hideFromSearch = noindex || !site.launched;
 // Escape "<" so the JSON can never close its <script> tag early.
 const structuredData = jsonLd && JSON.stringify(jsonLd).replaceAll('<', '\\u003c');
+
+// The row the page transitions move along (src/styles/transitions.css): moving right is forward.
+const pages = [
+  '/',
+  '/projects/',
+  ...(await getProjects()).map((project) => `/projects/${project.id}/`),
+  '/about/',
+  '/resume/',
+];
 ---
 
 <!doctype html>
@@ -79,6 +90,83 @@ const structuredData = jsonLd && JSON.stringify(jsonLd).replaceAll('<', '\\u003c
         root.dataset.theme = theme;
       })();
     </script>
+    <script is:inline define:vars={{ pages }}>
+      // Page transitions (src/styles/transitions.css). Tags each navigation with its type, from
+      // where it starts and ends in `pages`, before the new page first paints. Opening or closing
+      // a project also names its card's tile, so the browser can grow or shrink it.
+      const path = (url) => (url ? new URL(url, location.href).pathname : '');
+      const isProject = (p) => /^\/projects\/[^/]+\/$/.test(p);
+      const isList = (p) => p === '/' || p === '/projects/';
+
+      const typeOf = (from, to) => {
+        const a = pages.indexOf(from);
+        const b = pages.indexOf(to);
+        if (a < 0 || b < 0 || a === b) return 'fade';
+        if (isList(from) && isProject(to)) return 'open';
+        if (isProject(from) && isList(to)) return 'close';
+        const direction = b > a ? 'forward' : 'back';
+        return isProject(from) && isProject(to) ? `step-${direction}` : `section-${direction}`;
+      };
+
+      let tile;
+      /** Names the tile on this page's card for `project` if it's on screen; '' just clears it. */
+      const nameTile = (project) => {
+        if (tile) tile.style.viewTransitionName = '';
+        tile = document
+          .querySelector(`.project a[href="${project}"]`)
+          ?.closest('.project')
+          ?.querySelector('.frame');
+        const box = tile?.getBoundingClientRect();
+        if (box && box.bottom > 0 && box.top < innerHeight) {
+          tile.style.viewTransitionName = 'project-tile';
+          return true;
+        }
+        tile = undefined;
+        return false;
+      };
+
+      // Where the last clicked link goes, for browsers without the Navigation API.
+      let clicked = '';
+      addEventListener('click', (event) => {
+        clicked = event.target.closest?.('a[href]')?.href ?? clicked;
+      });
+
+      // The tile's colour, for the shape that grows from it or shrinks into it.
+      const tileColour = () => getComputedStyle(tile).backgroundColor;
+      const setTint = (colour) =>
+        document.documentElement.style.setProperty('--transition-tint', colour ?? '');
+
+      addEventListener('pageswap', (event) => {
+        if (!event.viewTransition) return;
+        const to = path(event.activation?.entry?.url ?? clicked);
+        const opening = nameTile(typeOf(location.pathname, to) === 'open' ? to : '');
+        try {
+          // Always overwrite it, so a colour from an earlier visit is never reused.
+          sessionStorage.setItem('transition-tint', opening ? tileColour() : '');
+        } catch {
+          // Without storage the shape still grows, just without its colour.
+        }
+      });
+
+      addEventListener('pagereveal', (event) => {
+        if (!event.viewTransition) return;
+        const from = path(window.navigation?.activation?.from?.url ?? document.referrer);
+        let type = typeOf(from, location.pathname);
+        const tileShown = nameTile(type === 'close' ? from : '');
+        // With its card off screen (or not on this page), there's nothing to close into.
+        if (type === 'close' && !tileShown) type = 'section-back';
+        if (type === 'close') setTint(tileColour());
+        if (type === 'open') {
+          try {
+            setTint(sessionStorage.getItem('transition-tint'));
+          } catch {
+            setTint('');
+          }
+        }
+        event.viewTransition.types?.add(type);
+        document.documentElement.dataset.transition = type;
+      });
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">
@@ -89,6 +177,12 @@ const structuredData = jsonLd && JSON.stringify(jsonLd).replaceAll('<', '\\u003c
       <slot />
     </main>
     <SiteFooter />
+    <div class="transition-tiles" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <script>
       import '../scripts/email-links';
     </script>

@@ -1,0 +1,451 @@
+/*
+ * Page transitions, made with the browser's cross-document View Transitions, so no JavaScript has
+ * to download. Visitors who ask for reduced motion, and browsers without support, get ordinary
+ * page loads.
+ *
+ * The pages sit in a row: Home, Projects, each project, About, Résumé. A small script in
+ * src/layouts/BaseLayout.astro tags each navigation with a type, from where it starts and ends
+ * in that row:
+ * - section-forward / section-back, between Home, Projects, About and Résumé: four tiles in the
+ *   project colours sweep across in the direction of travel, hiding the swap as the pages slide.
+ * - open / close, from a project card to its page and back: the card's tile grows to fill the
+ *   screen and dissolves into the page, like opening an app; closing shrinks the page back into it.
+ * - step-forward / step-back, to the previous or next project: the pages swing past each other,
+ *   like Cover Flow.
+ * - fade, for anything else (the 404 page, for one): the browser's crossfade.
+ * Through all of them, the header stays where it is.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+:root {
+  /* A gentle spring, with about 3% overshoot. */
+  --ease-spring: linear(
+    0,
+    0.056,
+    0.185,
+    0.344,
+    0.504,
+    0.647,
+    0.767,
+    0.861,
+    0.929,
+    0.976,
+    1.006,
+    1.023,
+    1.03,
+    1.031,
+    1.029,
+    1.024,
+    1.019,
+    1.014,
+    1.01,
+    1.006,
+    1.004,
+    1.002,
+    1
+  );
+  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-strong: cubic-bezier(0.64, 0, 0.78, 0);
+}
+
+/* The header stays put while the page changes beneath it. */
+.site-header {
+  view-transition-name: site-header;
+}
+
+/* The tiles for the section sweep: invisible on the page, drawn only while a transition runs. */
+.transition-tiles > * {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32vw;
+  height: 160vh;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.transition-tiles > :nth-child(1) {
+  view-transition-name: tile-1;
+}
+
+.transition-tiles > :nth-child(2) {
+  view-transition-name: tile-2;
+}
+
+.transition-tiles > :nth-child(3) {
+  view-transition-name: tile-3;
+}
+
+.transition-tiles > :nth-child(4) {
+  view-transition-name: tile-4;
+}
+
+/* On a project page, the invisible full-screen shape that a card's tile grows into. */
+.transition-backdrop {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  view-transition-name: project-tile;
+}
+
+/* Stacking while a transition runs: the pages, then the project tile, the sweep, the header. */
+::view-transition-group(project-tile) {
+  z-index: 1;
+}
+
+::view-transition-group(tile-1),
+::view-transition-group(tile-2),
+::view-transition-group(tile-3),
+::view-transition-group(tile-4) {
+  z-index: 2;
+}
+
+::view-transition-group(site-header) {
+  z-index: 3;
+}
+
+/* Section to section: the tiles sweep across, covering the page at the halfway point. */
+html:active-view-transition-type(section-forward, section-back) {
+  &::view-transition-group(tile-1),
+  &::view-transition-group(tile-2),
+  &::view-transition-group(tile-3),
+  &::view-transition-group(tile-4) {
+    border-radius: 2.5rem;
+    animation: 660ms both tiles-left;
+  }
+
+  &::view-transition-group(tile-1) {
+    --lane: 0;
+    background: var(--tint-1);
+  }
+
+  &::view-transition-group(tile-2) {
+    --lane: 1;
+    background: var(--tint-2);
+  }
+
+  &::view-transition-group(tile-3) {
+    --lane: 2;
+    background: var(--tint-3);
+  }
+
+  &::view-transition-group(tile-4) {
+    --lane: 3;
+    background: var(--color-accent);
+  }
+
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    mix-blend-mode: normal;
+    animation-duration: 660ms;
+    animation-fill-mode: both;
+  }
+
+  &::view-transition-old(root) {
+    animation-name: page-out-left;
+  }
+
+  &::view-transition-new(root) {
+    animation-name: page-in-from-right;
+  }
+}
+
+html:active-view-transition-type(section-back) {
+  &::view-transition-group(tile-1),
+  &::view-transition-group(tile-2),
+  &::view-transition-group(tile-3),
+  &::view-transition-group(tile-4) {
+    animation-name: tiles-right;
+  }
+
+  &::view-transition-old(root) {
+    animation-name: page-out-right;
+  }
+
+  &::view-transition-new(root) {
+    animation-name: page-in-from-left;
+  }
+}
+
+/*
+ * Opening a project: the card's tile grows into a shape in its colour that fills the screen, then
+ * dissolves into the page. (--transition-tint is the tile's colour, set by the script.)
+ */
+html:active-view-transition-type(open) {
+  &::view-transition-group(project-tile) {
+    overflow: clip;
+    animation-duration: 640ms;
+    animation-timing-function: var(--ease-spring);
+  }
+
+  &::view-transition-image-pair(project-tile) {
+    background: var(--transition-tint);
+    animation: 280ms 360ms both fade-out;
+  }
+
+  /* The card's picture (its name, or a screenshot) fades as the shape grows. */
+  &::view-transition-old(project-tile) {
+    block-size: 100%;
+    object-fit: cover;
+    animation: 180ms both fade-out;
+  }
+
+  &::view-transition-new(project-tile) {
+    opacity: 0;
+    animation: none;
+  }
+
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+
+  &::view-transition-old(root) {
+    animation: 360ms var(--ease-in-strong) both recede;
+  }
+
+  &::view-transition-new(root) {
+    animation: 380ms 280ms var(--ease-out-strong) both rise;
+  }
+}
+
+/*
+ * Closing it: the project page is covered by its colour, which shrinks back into the card's
+ * tile as the list returns around it.
+ */
+html:active-view-transition-type(close) {
+  &::view-transition-group(project-tile) {
+    overflow: clip;
+    animation-duration: 600ms;
+    animation-timing-function: var(--ease-spring);
+  }
+
+  &::view-transition-image-pair(project-tile) {
+    background: var(--transition-tint);
+    animation: 120ms both fade-in;
+  }
+
+  &::view-transition-old(project-tile) {
+    opacity: 0;
+    animation: none;
+  }
+
+  &::view-transition-new(project-tile) {
+    block-size: 100%;
+    object-fit: cover;
+    animation: 220ms 320ms both fade-in;
+  }
+
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+
+  &::view-transition-old(root) {
+    animation: 120ms both fade-out;
+  }
+
+  &::view-transition-new(root) {
+    animation: 480ms 100ms var(--ease-out-strong) both emerge;
+  }
+}
+
+/* Project to project: the pages swing past each other, turned to face the middle. */
+html:active-view-transition-type(step-forward, step-back) {
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    mix-blend-mode: normal;
+    animation-duration: 660ms;
+    animation-fill-mode: both;
+  }
+
+  &::view-transition-old(root) {
+    animation-name: flow-out-left;
+  }
+
+  &::view-transition-new(root) {
+    animation-name: flow-in-from-right;
+  }
+}
+
+html:active-view-transition-type(step-back) {
+  &::view-transition-old(root) {
+    animation-name: flow-out-right;
+  }
+
+  &::view-transition-new(root) {
+    animation-name: flow-in-from-left;
+  }
+}
+
+/*
+ * The sweep. Each tile is 32vw wide and sits in a lane 26vw from the last, so the four overlap
+ * into one band wider than the screen. The band slows to a stop over the page at 48%, while
+ * the pages swap beneath it, then speeds away.
+ */
+@keyframes tiles-left {
+  0% {
+    transform: translate(calc(112vw + var(--lane) * 26vw), -30vh)
+      rotate(calc(8deg + var(--lane) * 3deg));
+    animation-timing-function: var(--ease-out-strong);
+  }
+
+  48% {
+    transform: translate(calc(-5vw + var(--lane) * 26vw), -30vh) rotate(calc(var(--lane) * 0.5deg));
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  100% {
+    transform: translate(calc(-122vw + var(--lane) * 26vw), -30vh)
+      rotate(calc(-8deg - var(--lane) * 3deg));
+  }
+}
+
+@keyframes tiles-right {
+  0% {
+    transform: translate(calc(-122vw + var(--lane) * 26vw), -30vh)
+      rotate(calc(-8deg - var(--lane) * 3deg));
+    animation-timing-function: var(--ease-out-strong);
+  }
+
+  48% {
+    transform: translate(calc(-5vw + var(--lane) * 26vw), -30vh) rotate(calc(var(--lane) * -0.5deg));
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  100% {
+    transform: translate(calc(112vw + var(--lane) * 26vw), -30vh)
+      rotate(calc(8deg + var(--lane) * 3deg));
+  }
+}
+
+@keyframes page-out-left {
+  0% {
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  48%,
+  100% {
+    transform: translateX(-6vw);
+    opacity: 0;
+  }
+}
+
+@keyframes page-out-right {
+  0% {
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  48%,
+  100% {
+    transform: translateX(6vw);
+    opacity: 0;
+  }
+}
+
+@keyframes page-in-from-right {
+  0%,
+  52% {
+    transform: translateX(6vw);
+    opacity: 0;
+    animation-timing-function: var(--ease-out-strong);
+  }
+}
+
+@keyframes page-in-from-left {
+  0%,
+  52% {
+    transform: translateX(-6vw);
+    opacity: 0;
+    animation-timing-function: var(--ease-out-strong);
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes recede {
+  to {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+}
+
+@keyframes sink {
+  to {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+}
+
+@keyframes emerge {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+}
+
+/* The outgoing page turns away over the first 60%; the incoming one turns in from 30%. */
+@keyframes flow-out-left {
+  0% {
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  60%,
+  100% {
+    transform: perspective(1800px) translateX(-42%) rotateY(-42deg) scale(0.78);
+    opacity: 0;
+  }
+}
+
+@keyframes flow-in-from-right {
+  0%,
+  30% {
+    transform: perspective(1800px) translateX(42%) rotateY(42deg) scale(0.78);
+    opacity: 0;
+    animation-timing-function: var(--ease-out-strong);
+  }
+}
+
+@keyframes flow-out-right {
+  0% {
+    animation-timing-function: var(--ease-in-strong);
+  }
+
+  60%,
+  100% {
+    transform: perspective(1800px) translateX(42%) rotateY(42deg) scale(0.78);
+    opacity: 0;
+  }
+}
+
+@keyframes flow-in-from-left {
+  0%,
+  30% {
+    transform: perspective(1800px) translateX(-42%) rotateY(-42deg) scale(0.78);
+    opacity: 0;
+    animation-timing-function: var(--ease-out-strong);
+  }
+}

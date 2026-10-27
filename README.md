@@ -37,6 +37,16 @@ Almost every request is a static file from `dist/`. The exception is the [Termin
 - **If the terminal moves**, change `TERMINAL_ORIGIN` in `wrangler.jsonc`.
 - **To try the proxy locally**, run `npx wrangler dev` and open http://localhost:8787/projects/terminal.
 
+## Page transitions
+
+Moving between pages animates with the browser's own View Transitions (`src/styles/transitions.css`), so nothing extra downloads. The pages sit in a row (Home, Projects, each project, About, Résumé), and a small inline script in `src/layouts/BaseLayout.astro` picks the move from where a visit starts and ends in it:
+
+- **Between sections**, tiles in the project colours sweep across in the direction of travel.
+- **A project card** grows its tile to fill the screen and opens the project; going back shrinks the page into the card again.
+- **Next and previous project** swing the pages past each other, like Cover Flow.
+
+The header stays put throughout. Visitors who ask for reduced motion, and browsers without support, get ordinary page loads. Elements given a `view-transition-name` must each have a different one, or the browser skips the transition; `npm run test:site` checks every page.
+
 ## Tests and quality checks
 
 All of these run on every pull request, and any failure blocks the merge.
@@ -55,7 +65,7 @@ They cover the date and text helpers, the content rules (schemas, drafts, orderi
 ```sh
 npm run quality       # everything below
 npm run test:site     # the built pages in Chrome (tests/site/): content, SEO, privacy, theme, menu,
-                      # keyboard, layout, print, and axe accessibility
+                      # keyboard, layout, print, page transitions, and axe accessibility
 npm run test:a11y     # just the axe checks: every page, both themes, desktop and phone
 npm run check:links   # every internal link and #fragment resolves (add -- --external for outside links)
 npm run check:html    # HTML validation (html-validate)

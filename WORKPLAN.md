@@ -185,7 +185,8 @@ None of these pages are in the demo. They're designed directly in the browser fr
   - Writing section, with an RSS feed.
   - `/now` and `/uses` pages.
   - Project filters, and GitHub stars pulled in at build time.
-  - ⌘K command palette and View Transitions.
+  - ⌘K command palette.
+  - [x] View Transitions *(Oct 27 2026)*: a tile sweep between sections, a card that grows into its project and shrinks back, and Cover Flow between projects. Off with reduced motion. See README, "Page transitions".
   - Testimonials.
   - Contact form with Turnstile spam protection.
   - Uptime monitor.
