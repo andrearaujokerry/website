@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // Must match the Worker's name in the Cloudflare dashboard.
   "name": "website",
-  // Worker code that only runs for the paths in run_worker_first: the terminal proxy.
+  // Worker code: maintenance mode, the terminal proxy, and the static files.
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // Build the site before every deploy and preview upload.
@@ -17,27 +17,26 @@
   // address (useful on networks that block new domains) and the branch previews.
   "workers_dev": true,
   "preview_urls": true,
-  // Everything else is served straight from Astro's build output.
+  // The site itself: Astro's build output.
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     // Unknown paths get dist/404.html (added in Phase 5) with a 404 status.
     "not_found_handling": "404-page",
-    // The terminal's page and the root paths it loads and calls go to worker/index.ts.
-    "run_worker_first": [
-      "/projects/terminal",
-      "/projects/terminal/*",
-      "/api/*",
-      "/ws/*",
-      "/assets/*",
-    ],
+    // Every request goes to worker/index.ts first, so it can hide the site (MAINTENANCE below)
+    // and proxy the terminal's paths; it hands everything else to these files.
+    "run_worker_first": true,
   },
   "vars": {
     // The terminal (github.com/andrearaujokerry/bloomberg) on Render, served at /projects/terminal.
     "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
+    // "true" hides the whole site behind an "under development" page (worker/maintenance.ts).
+    // Set it to "false" to bring the site back.
+    "MAINTENANCE": "true",
   },
   // Branch builds run `wrangler preview` (Worker Previews), which requires this block. Previews
-  // reuse "assets" and the compatibility settings above, but NOT "vars", so repeat them here.
+  // reuse "assets" and the compatibility settings above, but NOT "vars", so repeat the ones they
+  // need here. Leave MAINTENANCE out, so previews keep showing the real site.
   "previews": {
     "vars": {
       "TERMINAL_ORIGIN": "https://terminal-tbmn.onrender.com",
