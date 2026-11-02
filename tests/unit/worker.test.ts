@@ -1,10 +1,12 @@
-// The Worker (worker/index.ts): static files for the site, and a proxy to the Terminal on Render
-// for /projects/terminal and the root paths it uses. Also guards wrangler.jsonc, whose settings
-// decide which requests reach the Worker at all.
+// The Worker (worker/index.ts): static files for the site, a proxy to the Terminal on Render for
+// /projects/terminal and the root paths it uses, and the "under development" page that hides the
+// site in maintenance mode. Also guards the settings in wrangler.jsonc.
 import { readFileSync } from 'node:fs';
+import { parseHTML } from 'linkedom';
 import ts from 'typescript';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import worker from '../../worker/index';
+import { maintenancePage } from '../../worker/maintenance';
 
 const ORIGIN = 'https://terminal.example';
 const SITE = 'https://andrearaujokerry.com';
@@ -22,10 +24,16 @@ afterEach(() => {
   assets.fetch.mockClear();
 });
 
+interface Env {
+  ASSETS: typeof assets;
+  TERMINAL_ORIGIN: string;
+  MAINTENANCE?: string;
+}
+
 function visit(
   path: string,
   init?: RequestInit,
-  env = { ASSETS: assets, TERMINAL_ORIGIN: ORIGIN },
+  env: Env = { ASSETS: assets, TERMINAL_ORIGIN: ORIGIN },
 ) {
   return worker.fetch(new Request(SITE + path, init), env);
 }
@@ -191,6 +199,56 @@ describe('when something is wrong', () => {
   });
 });
 
+describe('maintenance mode (MAINTENANCE = "true")', () => {
+  const hidden: Env = { ASSETS: assets, TERMINAL_ORIGIN: ORIGIN, MAINTENANCE: 'true' };
+
+  test.each([...sitePaths, ...terminalPaths, '/robots.txt', '/sitemap-index.xml'])(
+    '%s shows the "under development" page instead',
+    async (path) => {
+      const response = await visit(path, undefined, hidden);
+      expect(await response.text()).toBe(maintenancePage);
+      expect(assets.fetch).not.toHaveBeenCalled();
+      expect(terminal).not.toHaveBeenCalled();
+    },
+  );
+
+  test('it says "temporarily unavailable" and asks not to be cached or indexed', async () => {
+    const response = await visit('/', undefined, hidden);
+    expect(response.status).toBe(503);
+    expect(Object.fromEntries(response.headers)).toMatchObject({
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+      'retry-after': '86400',
+      'x-robots-tag': 'noindex',
+    });
+  });
+
+  test('a HEAD request gets the same answer without the page', async () => {
+    const response = await visit('/about/', { method: 'HEAD' }, hidden);
+    expect(response.status).toBe(503);
+    expect(response.body).toBeNull();
+  });
+
+  test.each(['false', '', undefined])(
+    'MAINTENANCE = %j leaves the site as it is',
+    async (value) => {
+      const response = await visit('/about/', undefined, { ...hidden, MAINTENANCE: value });
+      expect(await response.text()).toBe('static file');
+    },
+  );
+
+  test('the page stands on its own: one message, nothing to load, kept out of search', () => {
+    const { document } = parseHTML(maintenancePage);
+    expect(document.documentElement.getAttribute('lang')).toBe('en');
+    expect(document.title).toBe('Andre Araujo-Kerry');
+    expect(document.querySelector('meta[name="viewport"]')).not.toBeNull();
+    expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex');
+    expect(document.querySelectorAll('h1')).toHaveLength(1);
+    expect(document.querySelector('h1')?.textContent).toBe('Under development.');
+    expect(document.querySelectorAll('[src], link[href], a[href]')).toHaveLength(0);
+  });
+});
+
 describe('wrangler.jsonc', () => {
   // Parsed with TypeScript's JSONC reader, which allows the comments and trailing commas.
   const { config, error } = ts.parseConfigFileTextToJson(
@@ -199,18 +257,14 @@ describe('wrangler.jsonc', () => {
   );
   if (error) throw new Error(ts.flattenDiagnosticMessageText(error.messageText, '\n'));
 
-  /** Cloudflare's `run_worker_first` patterns: exact paths, or a prefix ending in `/*`. */
-  const runsWorker = (path: string) =>
-    (config.assets.run_worker_first as string[]).some((pattern) =>
-      pattern.endsWith('/*') ? path.startsWith(pattern.slice(0, -1)) : path === pattern,
-    );
-
-  test('every terminal path reaches the Worker before the static files', () => {
-    for (const path of terminalPaths) expect(runsWorker(path), path).toBe(true);
+  test('every request reaches the Worker first, so it can hide the site or proxy the terminal', () => {
+    expect(config.assets.run_worker_first).toBe(true);
   });
 
-  test('no page of the site is sent to the Worker by mistake', () => {
-    for (const path of sitePaths) expect(runsWorker(path), path).toBe(false);
+  test('maintenance mode is "true" or "false" in production, and never on in previews', () => {
+    // Previews only get previews.vars, so they keep showing the real site to work on.
+    expect(['true', 'false']).toContain(config.vars.MAINTENANCE);
+    expect(config.previews.vars.MAINTENANCE).toBeUndefined();
   });
 
   test('the link checker reserves the same paths as the Worker', () => {

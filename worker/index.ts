@@ -1,23 +1,29 @@
-// The site's Worker code. Almost every request is a static file from dist/, which Cloudflare
-// answers without running this. Only the paths in `assets.run_worker_first` (wrangler.jsonc)
-// reach it: the terminal (github.com/andrearaujokerry/bloomberg), which runs on Render and is
-// served at /projects/terminal through this proxy, so visitors stay on this domain.
+// The site's Worker code. Every request comes here first (`run_worker_first` in wrangler.jsonc):
+// - While MAINTENANCE is "true" (production only), every address shows the "under development"
+//   page in worker/maintenance.ts instead of the site.
+// - The terminal (github.com/andrearaujokerry/bloomberg) runs on Render and is served at
+//   /projects/terminal through the proxy below, so visitors stay on this domain.
+// - Everything else is a static file from dist/.
+import { maintenancePage } from './maintenance';
 
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Where the terminal runs, e.g. https://terminal-tbmn.onrender.com */
   TERMINAL_ORIGIN: string;
+  /** "true" hides the whole site behind worker/maintenance.ts. */
+  MAINTENANCE?: string;
 }
 
 /**
  * The terminal's page, plus the root paths that page loads and calls: its build in /assets/, its
  * REST API in /api/ and its live feed on /ws/ (the app assumes it sits at the root of its origin).
- * Keep in sync with `run_worker_first` in wrangler.jsonc and PROXIED in scripts/check-links.mjs.
+ * Keep in sync with PROXIED in scripts/check-links.mjs.
  */
 const TERMINAL_PATHS = /^\/(?:projects\/terminal(?:\/.*)?|api\/.*|ws\/.*|assets\/.*)$/;
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    if (env.MAINTENANCE === 'true') return underDevelopment(request);
     const url = new URL(request.url);
     if (!TERMINAL_PATHS.test(url.pathname)) return env.ASSETS.fetch(request);
     if (!env.TERMINAL_ORIGIN) {
@@ -30,6 +36,20 @@ export default {
     return proxyToTerminal(request, url, env.TERMINAL_ORIGIN);
   },
 };
+
+/** The "under development" page, at every address while the site is hidden. */
+function underDevelopment(request: Request): Response {
+  return new Response(request.method === 'HEAD' ? null : maintenancePage, {
+    // Temporarily unavailable: search engines come back later instead of indexing this page.
+    status: 503,
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+      'retry-after': '86400',
+      'x-robots-tag': 'noindex',
+    },
+  });
+}
 
 async function proxyToTerminal(request: Request, url: URL, origin: string): Promise<Response> {
   const upstream = new URL(url.pathname + url.search, origin);

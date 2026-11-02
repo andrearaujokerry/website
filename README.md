@@ -29,6 +29,13 @@ The site is a Cloudflare Worker (`wrangler.jsonc`) at **https://andrearaujokerry
 - **workers.dev:** the site is also at https://website.andre-araujo-kerry.workers.dev, which helps on networks that block new domains. `public/_headers` keeps that copy and the previews out of search results.
 - **Analytics:** Cloudflare Web Analytics, set up in the dashboard rather than in the code.
 
+### Hiding the site (maintenance mode)
+
+While `MAINTENANCE` is `"true"` in `wrangler.jsonc` (under `vars`), every address on the live site shows a short "under development" page (`worker/maintenance.ts`). It's sent with a 503 "temporarily unavailable" status, so search engines come back later instead of indexing it. Branch previews never get the setting, so they keep showing the real site to work on.
+
+- **To bring the site back:** set `MAINTENANCE` to `"false"` and merge to `main`.
+- **For an instant switch, without a deploy:** in the Cloudflare dashboard, open the `website` Worker → Settings → Variables and Secrets, edit `MAINTENANCE`, then deploy. The next merge to `main` puts back the value in `wrangler.jsonc`.
+
 ### The Terminal
 
 Almost every request is a static file from `dist/`. The exception is the [Terminal](https://github.com/andrearaujokerry/bloomberg), which runs on Render and appears at **`/projects/terminal`**. A small proxy in `worker/index.ts` forwards that page to Render, along with the root paths the terminal loads and calls: `/assets/`, `/api/` and `/ws/` (including its WebSocket). So:
